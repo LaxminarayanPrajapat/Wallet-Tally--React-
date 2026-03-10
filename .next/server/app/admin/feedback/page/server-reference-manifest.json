@@ -1,0 +1,35 @@
+{
+  "node": {
+    "6079f589103979d365399e4b578cebf13a40f59fc0": {
+      "workers": {
+        "app/admin/feedback/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/feedback/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/email.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "sendFeedbackApprovalEmail",
+          "filename": "src/app/actions/email.ts"
+        }
+      },
+      "layer": {
+        "app/admin/feedback/page": "action-browser"
+      },
+      "exportedName": "sendFeedbackApprovalEmail",
+      "filename": "src/app/actions/email.ts"
+    },
+    "705e2233038eb16bd2ec17cc557098372ff6aae7f0": {
+      "workers": {
+        "app/admin/feedback/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/feedback/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/email.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "sendFeedbackDeletionEmail",
+          "filename": "src/app/actions/email.ts"
+        }
+      },
+      "layer": {
+        "app/admin/feedback/page": "action-browser"
+      },
+      "exportedName": "sendFeedbackDeletionEmail",
+      "filename": "src/app/actions/email.ts"
+    }
+  },
+  "edge": {}
+}

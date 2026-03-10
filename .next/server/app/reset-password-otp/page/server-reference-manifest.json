@@ -1,0 +1,20 @@
+{
+  "node": {
+    "70491ade8981ac4f76ca77f8b1a54e8fd75d75126b": {
+      "workers": {
+        "app/reset-password-otp/page": {
+          "moduleId": "[project]/.next-internal/server/app/reset-password-otp/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/email.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "sendPasswordResetOtpEmail",
+          "filename": "src/app/actions/email.ts"
+        }
+      },
+      "layer": {
+        "app/reset-password-otp/page": "action-browser"
+      },
+      "exportedName": "sendPasswordResetOtpEmail",
+      "filename": "src/app/actions/email.ts"
+    }
+  },
+  "edge": {}
+}
