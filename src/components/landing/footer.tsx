@@ -21,7 +21,7 @@ export function Footer() {
             Privacy Policy
           </Link>
           <Link
-            href="#"
+            href="/support"
             className="rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-white/10"
           >
             Support

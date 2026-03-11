@@ -2402,17 +2402,25 @@ function FeedbackCard() {
         setIsSubmitting(true);
         try {
             const docRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(firestore, 'users', user.uid, 'feedback', 'current');
+            // Check if feedback content has changed and was previously approved
+            const hasContentChanged = existingFeedback && (existingFeedback.rating !== rating || existingFeedback.comment !== feedback);
+            const wasApproved = existingFeedback?.isApproved === true;
+            // If content changed and was approved, set isApproved to false
+            const shouldDisapprove = hasContentChanged && wasApproved;
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["setDoc"])(docRef, {
                 userId: user.uid,
                 rating,
                 comment: feedback,
-                updatedAt: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["serverTimestamp"])()
+                updatedAt: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["serverTimestamp"])(),
+                ...shouldDisapprove && {
+                    isApproved: false
+                }
             }, {
                 merge: true
             });
             toast({
                 title: "Feedback Saved",
-                description: "Your feedback has been updated successfully!"
+                description: shouldDisapprove ? "Your feedback has been updated. It will need admin re-approval to be featured." : "Your feedback has been updated successfully!"
             });
         } catch (error) {
             toast({
@@ -2431,12 +2439,12 @@ function FeedbackCard() {
                 className: "h-8 w-8 animate-spin text-primary"
             }, void 0, false, {
                 fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                lineNumber: 68,
+                lineNumber: 83,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-            lineNumber: 67,
+            lineNumber: 82,
             columnNumber: 7
         }, this);
     }
@@ -2450,12 +2458,12 @@ function FeedbackCard() {
                     children: "Rate Your Experience"
                 }, void 0, false, {
                     fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                    lineNumber: 76,
+                    lineNumber: 91,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                lineNumber: 75,
+                lineNumber: 90,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2480,17 +2488,17 @@ function FeedbackCard() {
                                             className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("w-10 h-10 transition-colors", star <= rating ? "fill-yellow-400 text-yellow-400" : "text-[#e2e8f0]")
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                                            lineNumber: 88,
+                                            lineNumber: 103,
                                             columnNumber: 17
                                         }, this)
                                     }, star, false, {
                                         fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                                        lineNumber: 82,
+                                        lineNumber: 97,
                                         columnNumber: 15
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                                lineNumber: 80,
+                                lineNumber: 95,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2498,13 +2506,13 @@ function FeedbackCard() {
                                 children: "Click to rate"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                                lineNumber: 97,
+                                lineNumber: 112,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                        lineNumber: 79,
+                        lineNumber: 94,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -2514,7 +2522,7 @@ function FeedbackCard() {
                         onChange: (e)=>setFeedback(e.target.value)
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                        lineNumber: 100,
+                        lineNumber: 115,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2525,7 +2533,7 @@ function FeedbackCard() {
                             className: "h-5 w-5 animate-spin"
                         }, void 0, false, {
                             fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                            lineNumber: 113,
+                            lineNumber: 128,
                             columnNumber: 13
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                             children: [
@@ -2533,7 +2541,7 @@ function FeedbackCard() {
                                     className: "h-5 w-5"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                                    lineNumber: 116,
+                                    lineNumber: 131,
                                     columnNumber: 15
                                 }, this),
                                 "Submit Feedback"
@@ -2541,19 +2549,19 @@ function FeedbackCard() {
                         }, void 0, true)
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                        lineNumber: 107,
+                        lineNumber: 122,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-                lineNumber: 78,
+                lineNumber: 93,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/dashboard/feedback-card.tsx",
-        lineNumber: 74,
+        lineNumber: 89,
         columnNumber: 5
     }, this);
 }

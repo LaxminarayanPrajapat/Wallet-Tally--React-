@@ -20,9 +20,11 @@ export function AppHeader() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.push('/login');
+      router.replace('/login');
     } catch (error) {
       console.error('Logout failed', error);
+      // Force navigation even if signOut fails
+      router.replace('/login');
     }
   };
 
@@ -55,8 +57,8 @@ export function AppHeader() {
 
       <div className="flex items-center gap-3">
         {/* Profile Section - Clickable on mobile, inert on desktop */}
-        <Link 
-          href="/settings" 
+        <Link
+          href="/settings"
           className="flex items-center gap-2 pl-2 border-l ml-2 group md:pointer-events-none md:cursor-default"
         >
           <Avatar className="h-9 w-9 border-2 border-primary/20 group-hover:border-primary/50 transition-colors">
@@ -79,8 +81,8 @@ export function AppHeader() {
           </Button>
         </Link>
 
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={handleLogout}
           className="border-[#ef4444] text-[#ef4444] hover:bg-[#ef4444] hover:text-white rounded-lg h-9 px-3 gap-2 font-semibold transition-colors group"
         >

@@ -5,13 +5,13 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { 
-  signInWithEmailAndPassword, 
-  signInAnonymously, 
+import {
+  signInWithEmailAndPassword,
+  signInAnonymously,
   signOut,
   setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence 
+  browserSessionPersistence
 } from 'firebase/auth';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { User, Lock, Eye, EyeOff, LogIn, Key, Loader2 } from 'lucide-react';
@@ -75,7 +75,7 @@ export default function LoginPage() {
         const usersRef = collection(firestore, 'users');
         const q = query(usersRef, where('name', '==', values.loginId));
         const querySnapshot = await getDocs(q);
-        
+
         if (querySnapshot.empty) {
           // Check for internal virtual username format
           emailToUse = `${values.loginId}@wallet-tally.internal`;
@@ -90,7 +90,7 @@ export default function LoginPage() {
 
       // CRITICAL: Check if user profile exists in Firestore (Validation against deleted accounts)
       const userDoc = await getDoc(doc(firestore, 'users', user.uid));
-      
+
       if (!userDoc.exists()) {
         // If profile is deleted from Firestore, deny access
         await signOut(auth);
@@ -133,9 +133,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary via-[#1a2e3a] to-accent p-4">
       <div className="w-full max-w-[440px] space-y-8 rounded-[2.5rem] bg-card p-10 text-card-foreground shadow-2xl">
         <div className="flex flex-col items-center justify-center text-center space-y-4">
-          <div className="relative w-20 h-20 rounded-full bg-[#0d1b2a] flex items-center justify-center shadow-xl border border-white/10 overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 opacity-50" />
-            <Icons.Logo className="h-10 w-10 relative z-10" />
+          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
+            <Icons.Logo className="w-10 h-10" />
           </div>
           <div className="space-y-1">
             <h1 className="text-3xl font-bold tracking-tight text-[#1a2e3a]">
@@ -157,10 +156,10 @@ export default function LoginPage() {
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input 
-                        placeholder="Username or Email" 
-                        className="pl-12 rounded-2xl h-14 border-muted bg-muted/20 focus:bg-background transition-all" 
-                        {...field} 
+                      <Input
+                        placeholder="Email"
+                        className="pl-12 rounded-2xl h-14 border-muted bg-muted/20 focus:bg-background transition-all"
+                        {...field}
                         disabled={isLoading}
                       />
                     </div>
@@ -177,11 +176,11 @@ export default function LoginPage() {
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="Password" 
-                        className="pl-12 pr-12 rounded-2xl h-14 border-muted bg-muted/20 focus:bg-background transition-all" 
-                        {...field} 
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className="pl-12 pr-12 rounded-2xl h-14 border-muted bg-muted/20 focus:bg-background transition-all"
+                        {...field}
                         disabled={isLoading}
                       />
                       <button
@@ -205,9 +204,9 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center space-x-2 space-y-0">
                     <FormControl>
-                      <Checkbox 
-                        checked={field.value} 
-                        onCheckedChange={field.onChange} 
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
                         className="rounded-sm border-muted"
                       />
                     </FormControl>
@@ -228,7 +227,7 @@ export default function LoginPage() {
                 <Loader2 className="w-6 h-6 animate-spin" />
               ) : (
                 <>
-                  <LogIn className="w-6 h-6" /> 
+                  <LogIn className="w-6 h-6" />
                   <span>Login</span>
                 </>
               )}
@@ -237,8 +236,8 @@ export default function LoginPage() {
         </Form>
 
         <div className="flex flex-col items-center space-y-6">
-          <Link 
-            href="/forgot-password" 
+          <Link
+            href="/forgot-password"
             className="text-sm font-bold text-[#1a2e3a] hover:underline flex items-center gap-2 transition-all"
           >
             <Key className="w-4 h-4" />

@@ -9,15 +9,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { fetchSignInMethodsForEmail, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
-import { 
-  Loader2, 
-  User, 
-  Mail, 
-  Lock, 
-  Globe, 
-  Banknote, 
-  Eye, 
-  EyeOff, 
+import {
+  Loader2,
+  User,
+  Mail,
+  Lock,
+  Globe,
+  Banknote,
+  Eye,
+  EyeOff,
   UserPlus,
   Check,
   Pencil
@@ -34,13 +34,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
 } from '@/components/ui/form';
 import {
   Dialog,
@@ -58,7 +58,7 @@ import { cn } from '@/lib/utils';
 
 // Curated seeds representing the requested personas:
 const AVATAR_SEEDS = [
-  "Aiden", "Maya", "Liam", "Zoe", "Leo", 
+  "Aiden", "Maya", "Liam", "Zoe", "Leo",
   "Mason", "Sophia", "James", "Elena", "Xavier",
   "Isabella", "William", "Mia", "Oliver", "Ava",
   "Charles", "Margaret", "George", "Martha", "Arthur",
@@ -90,7 +90,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const auth = useAuth();
   const firestore = useFirestore();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -115,7 +115,9 @@ export default function RegisterPage() {
     if (selectedCountryCode) {
       const country = countries.find((c) => c.code === selectedCountryCode);
       if (country) {
-        form.setValue('currency', country.currency.symbol);
+        // Display both symbol and code (e.g., "$ USD" or "₹ INR")
+        const currencyDisplay = `${country.currency.symbol} ${country.currency.code}`;
+        form.setValue('currency', currencyDisplay);
       }
     }
   }, [selectedCountryCode, form]);
@@ -127,7 +129,7 @@ export default function RegisterPage() {
       const usersRef = collection(firestore, 'users');
       const q = query(usersRef, where('name', '==', values.username));
       const querySnapshot = await getDocs(q);
-      
+
       if (!querySnapshot.empty) {
         form.setError('username', { type: 'manual', message: 'This username is already taken.' });
         setIsLoading(false);
@@ -145,7 +147,18 @@ export default function RegisterPage() {
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        sessionStorage.setItem('registrationData', JSON.stringify(values));
+
+        // Find the selected country to get the currency symbol
+        const selectedCountry = countries.find((c) => c.code === values.country);
+        const currencySymbol = selectedCountry?.currency.symbol || '₹';
+
+        // Store currency symbol (not the display format) for later use
+        const registrationData = {
+          ...values,
+          currency: currencySymbol
+        };
+
+        sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
         sessionStorage.setItem('otp', otp);
 
         const result = await sendOtpEmail(values.email, otp);
@@ -159,7 +172,7 @@ export default function RegisterPage() {
       } else {
         // Username Only Path: Direct Creation
         const virtualEmail = `${values.username}@wallet-tally.internal`;
-        
+
         // Ensure virtual email is unique too
         const existingVirtual = await fetchSignInMethodsForEmail(auth, virtualEmail);
         if (existingVirtual.length > 0) {
@@ -182,7 +195,11 @@ export default function RegisterPage() {
           joinedAt: new Date().toISOString()
         });
 
-        localStorage.setItem('currencySymbol', values.currency);
+        // Find the selected country to get the currency symbol
+        const selectedCountry = countries.find((c) => c.code === values.country);
+        const currencySymbol = selectedCountry?.currency.symbol || '₹';
+
+        localStorage.setItem('currencySymbol', currencySymbol);
         toast({ title: 'Welcome!', description: 'Your account has been created successfully.' });
         router.push('/dashboard');
       }
@@ -200,7 +217,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-accent py-12 px-4">
       <div className="w-full max-w-md bg-card rounded-[2.5rem] shadow-2xl p-8 space-y-6 text-card-foreground border border-white/10 backdrop-blur-sm">
-        
+
         <div className="flex flex-col items-center text-center space-y-3">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
             <Icons.Logo className="w-10 h-10" />
@@ -216,10 +233,10 @@ export default function RegisterPage() {
             <DialogTrigger asChild>
               <button className="relative group focus:outline-none" type="button">
                 <div className="w-28 h-28 rounded-full border-4 border-white shadow-xl overflow-hidden bg-muted group-hover:border-primary transition-all duration-300 ring-2 ring-primary/5">
-                  <Image 
-                    src={form.watch('photoURL')} 
-                    alt="Selected Avatar" 
-                    fill 
+                  <Image
+                    src={form.watch('photoURL')}
+                    alt="Selected Avatar"
+                    fill
                     unoptimized
                     className="object-cover"
                   />
@@ -270,7 +287,7 @@ export default function RegisterPage() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            
+
             <FormField
               control={form.control}
               name="username"
@@ -280,11 +297,11 @@ export default function RegisterPage() {
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input 
-                        placeholder="Choose a username" 
-                        className="pl-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background transition-colors" 
-                        {...field} 
-                        disabled={isLoading} 
+                      <Input
+                        placeholder="Choose a username"
+                        className="pl-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background transition-colors"
+                        {...field}
+                        disabled={isLoading}
                       />
                     </div>
                   </FormControl>
@@ -302,12 +319,12 @@ export default function RegisterPage() {
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input 
-                        type="email" 
-                        placeholder="your@email.com" 
-                        className="pl-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background transition-colors" 
-                        {...field} 
-                        disabled={isLoading} 
+                      <Input
+                        type="email"
+                        placeholder="your@email.com"
+                        className="pl-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background transition-colors"
+                        {...field}
+                        disabled={isLoading}
                       />
                     </div>
                   </FormControl>
@@ -325,12 +342,12 @@ export default function RegisterPage() {
                     <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Password</FormLabel>
                     <div className="relative">
                       <FormControl>
-                        <Input 
-                          type={showPassword ? "text" : "password"} 
-                          placeholder="••••••••" 
-                          className="pl-11 pr-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background" 
-                          {...field} 
-                          disabled={isLoading} 
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          className="pl-11 pr-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background"
+                          {...field}
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -355,12 +372,12 @@ export default function RegisterPage() {
                     <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Confirm</FormLabel>
                     <div className="relative">
                       <FormControl>
-                        <Input 
-                          type={showConfirmPassword ? "text" : "password"} 
-                          placeholder="••••••••" 
-                          className="pl-11 pr-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background" 
-                          {...field} 
-                          disabled={isLoading} 
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          className="pl-11 pr-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background"
+                          {...field}
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -411,19 +428,17 @@ export default function RegisterPage() {
                 render={({ field }) => (
                   <FormItem className="space-y-1.5">
                     <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Currency</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} disabled={isLoading}>
-                      <FormControl>
-                        <SelectTrigger className="rounded-2xl h-12 border-muted bg-muted/20 pl-11 relative focus:bg-background transition-colors">
-                          <Banknote className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                          <SelectValue placeholder="Symbol" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="rounded-2xl">
-                        {Array.from(new Set(countries.map(c => c.currency.symbol))).map(symbol => (
-                          <SelectItem key={symbol} value={symbol}>{symbol}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <div className="relative">
+                        <Banknote className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          value={field.value || ''}
+                          readOnly
+                          placeholder="Select country first"
+                          className="pl-11 rounded-2xl h-12 border-muted bg-muted/20 focus:bg-background transition-colors cursor-default font-medium"
+                        />
+                      </div>
+                    </FormControl>
                     <FormMessage className="ml-1" />
                   </FormItem>
                 )}
@@ -439,7 +454,7 @@ export default function RegisterPage() {
                 <Loader2 className="w-6 h-6 animate-spin" />
               ) : (
                 <>
-                  <UserPlus className="w-6 h-6" /> 
+                  <UserPlus className="w-6 h-6" />
                   <span>Create Account</span>
                 </>
               )}

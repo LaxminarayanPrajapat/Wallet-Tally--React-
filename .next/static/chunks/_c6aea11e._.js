@@ -51,19 +51,6 @@ const Icons = {
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
-                    x: "40",
-                    y: "104",
-                    width: "448",
-                    height: "320",
-                    rx: "48",
-                    fill: "black",
-                    fillOpacity: "0.1"
-                }, void 0, false, {
-                    fileName: "[project]/src/components/icons.tsx",
-                    lineNumber: 19,
-                    columnNumber: 7
-                }, ("TURBOPACK compile-time value", void 0)),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
                     x: "32",
                     y: "96",
                     width: "448",
@@ -74,7 +61,7 @@ const Icons = {
                     strokeWidth: "12"
                 }, void 0, false, {
                     fileName: "[project]/src/components/icons.tsx",
-                    lineNumber: 30,
+                    lineNumber: 19,
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -85,7 +72,7 @@ const Icons = {
                     strokeDasharray: "12 8"
                 }, void 0, false, {
                     fileName: "[project]/src/components/icons.tsx",
-                    lineNumber: 42,
+                    lineNumber: 31,
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
@@ -99,20 +86,17 @@ const Icons = {
                     strokeWidth: "12"
                 }, void 0, false, {
                     fileName: "[project]/src/components/icons.tsx",
-                    lineNumber: 51,
+                    lineNumber: 40,
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                     cx: "430",
                     cy: "240",
                     r: "34",
-                    fill: "white",
-                    style: {
-                        filter: 'drop-shadow(0px 4px 4px rgba(0,0,0,0.25))'
-                    }
+                    fill: "white"
                 }, void 0, false, {
                     fileName: "[project]/src/components/icons.tsx",
-                    lineNumber: 63,
+                    lineNumber: 52,
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -124,7 +108,7 @@ const Icons = {
                     strokeWidth: "2"
                 }, void 0, false, {
                     fileName: "[project]/src/components/icons.tsx",
-                    lineNumber: 72,
+                    lineNumber: 60,
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0))
             ]

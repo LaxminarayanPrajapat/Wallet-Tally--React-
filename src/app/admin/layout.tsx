@@ -63,9 +63,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [user, isUserLoading, router]);
 
   const handleLogout = async () => {
-    localStorage.removeItem('isAdmin');
-    await signOut(auth);
-    router.push('/login');
+    try {
+      localStorage.removeItem('isAdmin');
+      await signOut(auth);
+      // Use replace instead of push to avoid navigation issues
+      router.replace('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force navigation even if signOut fails
+      router.replace('/login');
+    }
   };
 
   if (isUserLoading || !isAuthorized) {
