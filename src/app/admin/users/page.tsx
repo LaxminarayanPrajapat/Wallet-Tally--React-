@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { 
-  Trash2, 
-  Search, 
-  Loader2, 
+import {
+  Trash2,
+  Search,
+  Loader2,
   Eye,
   AlertTriangle,
   Send,
@@ -18,13 +18,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
 import {
   Select,
@@ -55,7 +55,7 @@ export default function AdminUsersPage() {
   const firestore = useFirestore();
   const { user, isUserLoading: isAuthLoading } = useUser();
   const { toast } = useToast();
-  
+
   // UI States
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('all');
@@ -81,6 +81,10 @@ export default function AdminUsersPage() {
   const [isDeleteReasonOpen, setIsDeleteReasonOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleteProcessing, setIsDeleteProcessing] = useState(false);
+
+  // View User Modal State
+  const [selectedUserForView, setSelectedUserForView] = useState<any>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   // Data Fetching
   const usersQuery = useMemoFirebase(() => {
@@ -119,18 +123,18 @@ export default function AdminUsersPage() {
 
   const filteredUsers = useMemo(() => {
     return registeredUsers.filter(u => {
-      const matchesSearch = 
-        u.email?.toLowerCase().includes(appliedFilters.search.toLowerCase()) || 
+      const matchesSearch =
+        u.email?.toLowerCase().includes(appliedFilters.search.toLowerCase()) ||
         u.name?.toLowerCase().includes(appliedFilters.search.toLowerCase());
-      
+
       const matchesCountry = appliedFilters.country === 'all' || u.country === appliedFilters.country;
-      
+
       const userCurrency = countries.find(c => c.code === (u.country || 'IN'))?.currency.symbol || '$';
       const matchesCurrency = appliedFilters.currency === 'all' || userCurrency === appliedFilters.currency;
-      
+
       const userHasWarning = (u.warningCount || 0) > 0;
-      const matchesWarning = 
-        appliedFilters.warning === 'all' || 
+      const matchesWarning =
+        appliedFilters.warning === 'all' ||
         (appliedFilters.warning === 'with' && userHasWarning) ||
         (appliedFilters.warning === 'without' && !userHasWarning);
 
@@ -146,18 +150,18 @@ export default function AdminUsersPage() {
 
   const handleConfirmDelete = async () => {
     if (!firestore || !userToDelete || !deleteReason.trim()) return;
-    
+
     setIsDeleteProcessing(true);
     try {
       // 1. Dispatch official termination email via Server Action
       await sendAccountDeletionEmail(userToDelete.email, userToDelete.name || 'User', deleteReason);
-      
+
       const userId = userToDelete.id;
       const batch = writeBatch(firestore);
 
       // 2. Cascading cleanup: Purge all user-related subcollections
       const subcollectionsToPurge = ['transactions', 'categories', 'budgets', 'feedback'];
-      
+
       for (const colName of subcollectionsToPurge) {
         const colRef = collection(firestore, 'users', userId, colName);
         const snapshot = await getDocs(colRef);
@@ -171,12 +175,12 @@ export default function AdminUsersPage() {
 
       // 4. Execute all deletions in a single batch atomic operation
       await batch.commit();
-      
+
       toast({
         title: "Account Terminated",
         description: `Profile and all associated financial records for ${userToDelete.email} have been permanently purged.`,
       });
-      
+
       setIsDeleteReasonOpen(false);
       setUserToDelete(null);
     } catch (error: any) {
@@ -195,12 +199,12 @@ export default function AdminUsersPage() {
 
   const handleSendWarning = async () => {
     if (!firestore || !selectedUserForWarning || !violationType || !detailedReason.trim()) return;
-    
+
     setIsWarningProcessing(true);
     try {
       const result = await sendUserWarningEmail(
-        selectedUserForWarning.email, 
-        selectedUserForWarning.name || 'User', 
+        selectedUserForWarning.email,
+        selectedUserForWarning.name || 'User',
         violationType,
         detailedReason
       );
@@ -235,30 +239,29 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700">
-      
-      <Card className="shadow-sm border border-slate-100 rounded-2xl overflow-hidden bg-white">
-        <CardContent className="p-8">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h1 className="text-3xl font-bold text-[#23414d]">User Account Management</h1>
-              <p className="text-sm text-slate-500">Registered: {registeredUsers.length} | Showing: {filteredUsers.length}</p>
-              <div className="flex items-center gap-2 pt-1 text-[13px] font-medium text-cyan-500">
-                <Info className="w-4 h-4" />
-                <span>Termination triggers a cascading purge of all user transactions and records.</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-4 md:space-y-6 animate-in fade-in duration-700">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#1e293b]">User Management</h1>
+          <p className="text-xs md:text-sm text-slate-500 mt-1">
+            Registered: {registeredUsers.length} | Showing: {filteredUsers.length}
+          </p>
+        </div>
+      </div>
 
-      <Card className="shadow-sm border border-slate-100 rounded-2xl bg-white overflow-hidden">
-        <CardContent className="p-8 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 items-end">
+      <div className="flex items-center gap-2 p-3 md:p-4 bg-blue-50 text-blue-700 rounded-xl text-xs md:text-sm font-medium border border-blue-100">
+        <Info className="w-4 h-4 shrink-0" />
+        <span>Termination triggers a cascading purge of all user transactions and records.</span>
+      </div>
+
+      <Card className="shadow-lg border-0 rounded-2xl bg-white overflow-hidden">
+        <CardContent className="p-4 md:p-6 space-y-4 md:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-6 items-end">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">Country</label>
+              <label className="text-xs md:text-sm font-medium text-slate-600">Country</label>
               <Select value={countryFilter} onValueChange={setCountryFilter}>
-                <SelectTrigger className="h-11 rounded-lg border-slate-200">
+                <SelectTrigger className="h-10 md:h-11 rounded-lg border-slate-200 text-sm">
                   <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent>
@@ -270,9 +273,9 @@ export default function AdminUsersPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">Currency</label>
+              <label className="text-xs md:text-sm font-medium text-slate-600">Currency</label>
               <Select value={currencyFilter} onValueChange={setCurrencyFilter}>
-                <SelectTrigger className="h-11 rounded-lg border-slate-200">
+                <SelectTrigger className="h-10 md:h-11 rounded-lg border-slate-200 text-sm">
                   <SelectValue placeholder="All Currencies" />
                 </SelectTrigger>
                 <SelectContent>
@@ -298,14 +301,14 @@ export default function AdminUsersPage() {
             </div>
             <div className="space-y-2 lg:col-span-1">
               <label className="text-sm font-medium text-slate-600">Search</label>
-              <Input 
-                placeholder="Name or email..." 
+              <Input
+                placeholder="Name or email..."
                 className="h-11 rounded-lg border-slate-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button 
+            <Button
               onClick={handleApplyFilters}
               className="h-11 bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white rounded-lg px-8 font-bold flex items-center justify-center gap-2"
             >
@@ -314,17 +317,17 @@ export default function AdminUsersPage() {
             </Button>
           </div>
 
-          <div className="rounded-lg border border-slate-100 overflow-hidden">
+          <div className="rounded-lg border border-slate-100 overflow-x-auto">
             <Table>
               <TableHeader className="bg-[#f1f5f9]">
                 <TableRow className="hover:bg-transparent border-0">
-                  <TableHead className="w-16 font-bold text-[#1e3a8a]">ID</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Username</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Email</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Country</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Currency</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Joined</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a] text-center">Actions</TableHead>
+                  <TableHead className="w-20 font-bold text-[#1e3a8a]">ID</TableHead>
+                  <TableHead className="min-w-[150px] font-bold text-[#1e3a8a]">Username</TableHead>
+                  <TableHead className="min-w-[200px] font-bold text-[#1e3a8a]">Email</TableHead>
+                  <TableHead className="w-28 font-bold text-[#1e3a8a]">Country</TableHead>
+                  <TableHead className="min-w-[140px] font-bold text-[#1e3a8a]">Currency</TableHead>
+                  <TableHead className="w-32 font-bold text-[#1e3a8a]">Joined</TableHead>
+                  <TableHead className="w-40 font-bold text-[#1e3a8a] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -353,18 +356,19 @@ export default function AdminUsersPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-center gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => { setSelectedUserForView(u); setIsViewDialogOpen(true); }}
                               className="h-8 w-8 bg-[#23414d] hover:bg-[#23414d]/90 text-white rounded-lg flex items-center justify-center shadow-sm"
                               title="View Information"
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
 
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               onClick={() => initiateWarning(u)}
                               className="h-8 w-8 bg-[#f59e0b] hover:bg-[#f59e0b]/90 text-white rounded-lg flex items-center justify-center shadow-sm"
                               title={`Issue Warning (${u.warningCount || 0})`}
@@ -372,9 +376,9 @@ export default function AdminUsersPage() {
                               <AlertTriangle className="w-4 h-4" />
                             </Button>
 
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               onClick={() => initiateDelete(u)}
                               className="h-8 w-8 bg-[#dc2626] hover:bg-[#dc2626]/90 text-white rounded-lg flex items-center justify-center shadow-sm"
                               title="Terminate Account"
@@ -413,7 +417,7 @@ export default function AdminUsersPage() {
               Issue an official notice to <strong>{selectedUserForWarning?.email}</strong>
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-6 pt-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Violation Type</label>
@@ -434,7 +438,7 @@ export default function AdminUsersPage() {
 
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Detailed Explanation (Required)</label>
-              <Textarea 
+              <Textarea
                 placeholder="Provide specific details about the violation..."
                 className="min-h-[100px] rounded-2xl border-slate-200 p-4 text-sm bg-[#f8fafc]"
                 value={detailedReason}
@@ -443,7 +447,7 @@ export default function AdminUsersPage() {
             </div>
 
             <DialogFooter className="flex-col sm:flex-col gap-3">
-              <Button 
+              <Button
                 onClick={handleSendWarning}
                 disabled={!violationType || !detailedReason.trim() || isWarningProcessing}
                 className="w-full h-14 bg-[#f59e0b] hover:bg-[#d97706] text-white font-bold rounded-2xl shadow-lg flex items-center justify-center gap-2 border-0"
@@ -454,6 +458,112 @@ export default function AdminUsersPage() {
               <Button variant="ghost" onClick={() => setIsWarningDialogOpen(false)} className="w-full font-bold text-slate-400">Cancel</Button>
             </DialogFooter>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View User Information Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-lg rounded-[2rem] p-10 bg-white border-0 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-[#1e3a8a] flex items-center gap-3">
+              <Eye className="w-6 h-6" /> User Information
+            </DialogTitle>
+            <DialogDescription className="font-medium text-slate-500 pt-1">
+              Complete profile details and account status
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedUserForView && (
+            <div className="space-y-5 pt-6">
+              {/* User Profile Section */}
+              <div className="p-5 bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl border border-primary/10">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                    {selectedUserForView.name?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-800">{selectedUserForView.name || 'Anonymous'}</h3>
+                    <p className="text-sm text-slate-500">{selectedUserForView.email}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Details Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Country</p>
+                  <p className="text-sm font-bold text-slate-700">{selectedUserForView.country || 'IN'}</p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Currency</p>
+                  <p className="text-sm font-bold text-slate-700">
+                    {countries.find(c => c.code === selectedUserForView.country)?.currency.name || 'Indian Rupee'}
+                    ({countries.find(c => c.code === selectedUserForView.country)?.currency.symbol || '₹'})
+                  </p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Joined Date</p>
+                  <p className="text-sm font-bold text-slate-700">
+                    {selectedUserForView.joinedAt ? format(new Date(selectedUserForView.joinedAt), 'PPP') : 'N/A'}
+                  </p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">User ID</p>
+                  <p className="text-xs font-mono font-bold text-slate-700 truncate">{selectedUserForView.id}</p>
+                </div>
+              </div>
+
+              {/* Warning Status Section */}
+              <div className={cn(
+                "p-5 rounded-2xl border-2",
+                (selectedUserForView.warningCount || 0) > 0
+                  ? "bg-red-50 border-red-200"
+                  : "bg-emerald-50 border-emerald-200"
+              )}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className={cn(
+                      "w-5 h-5",
+                      (selectedUserForView.warningCount || 0) > 0 ? "text-red-600" : "text-emerald-600"
+                    )} />
+                    <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Warning Status</h4>
+                  </div>
+                  <Badge className={cn(
+                    "text-xs font-bold px-3 py-1",
+                    (selectedUserForView.warningCount || 0) > 0
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-emerald-600 hover:bg-emerald-700"
+                  )}>
+                    {selectedUserForView.warningCount || 0} Warning{(selectedUserForView.warningCount || 0) !== 1 ? 's' : ''}
+                  </Badge>
+                </div>
+
+                {(selectedUserForView.warningCount || 0) > 0 && (
+                  <div className="space-y-2 mt-3 pt-3 border-t border-red-200">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-medium text-slate-600">Last Warning Type:</span>
+                      <span className="font-bold text-slate-800">{selectedUserForView.lastWarningReason || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="font-medium text-slate-600">Last Warning Date:</span>
+                      <span className="font-bold text-slate-800">
+                        {selectedUserForView.lastWarningDate
+                          ? format(new Date(selectedUserForView.lastWarningDate), 'PPP')
+                          : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                onClick={() => setIsViewDialogOpen(false)}
+                className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white font-bold rounded-xl shadow-lg"
+              >
+                Close
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -468,11 +578,11 @@ export default function AdminUsersPage() {
               Terminate account for <strong>{userToDelete?.email}</strong>
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-6 pt-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Reason for Termination</label>
-              <Textarea 
+              <Textarea
                 placeholder="Explain the reason for this account deletion..."
                 className="min-h-[120px] rounded-2xl border-slate-200 p-4 italic text-sm"
                 value={deleteReason}
@@ -481,7 +591,7 @@ export default function AdminUsersPage() {
             </div>
 
             <DialogFooter className="flex-col sm:flex-col gap-3">
-              <Button 
+              <Button
                 onClick={handleConfirmDelete}
                 disabled={!deleteReason.trim() || isDeleteProcessing}
                 className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2"

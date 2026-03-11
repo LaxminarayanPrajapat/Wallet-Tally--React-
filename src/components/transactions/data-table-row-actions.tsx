@@ -48,8 +48,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useFirestore, useUser, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { doc, Timestamp } from 'firebase/firestore';
+import { useFirestore, useUser, deleteDocumentNonBlocking, updateDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
+import { doc, Timestamp, collection, query, orderBy } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useCurrencySymbol } from '@/hooks/use-currency';
 import { categories } from '@/lib/data';
@@ -80,19 +80,41 @@ export function DataTableRowActions<TData>({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
 
+  // Fetch all transactions to calculate balance
+  const transactionsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(
+      collection(firestore, 'users', user.uid, 'transactions'),
+      orderBy('date', 'desc')
+    );
+  }, [firestore, user]);
+
+  const { data: allTransactions } = useCollection(transactionsQuery);
+
+  const currentBalance = useMemo(() => {
+    if (!allTransactions) return 0;
+    const income = allTransactions
+      .filter((t) => t.type === 'income')
+      .reduce((acc, t) => acc + (t.amount || 0), 0);
+    const expenses = allTransactions
+      .filter((t) => t.type === 'expense')
+      .reduce((acc, t) => acc + (t.amount || 0), 0);
+    return income - expenses;
+  }, [allTransactions]);
+
   // Check for 24-hour edit restriction
   useEffect(() => {
     if (!transaction.date) return;
-    
+
     const checkExpiry = () => {
-      const txDate = transaction.date instanceof Timestamp 
-        ? transaction.date.toDate() 
+      const txDate = transaction.date instanceof Timestamp
+        ? transaction.date.toDate()
         : new Date(transaction.date);
-      
+
       const now = new Date();
       const diffMs = now.getTime() - txDate.getTime();
       const twentyFourHoursMs = 24 * 60 * 60 * 1000;
-      
+
       setIsExpired(diffMs >= twentyFourHoursMs);
     };
 
@@ -117,6 +139,20 @@ export function DataTableRowActions<TData>({
 
   const handleDelete = () => {
     if (!user || !firestore || !transaction.id || isExpired) return;
+
+    // Check if deleting this transaction would cause negative balance
+    if (transaction.type === 'income') {
+      const balanceAfterDelete = currentBalance - transaction.amount;
+      if (balanceAfterDelete < 0) {
+        toast({
+          variant: "destructive",
+          title: "Cannot Delete Transaction",
+          description: `Deleting this income would result in a negative balance of ${currencySymbol}${Math.abs(balanceAfterDelete).toFixed(2)}. Please adjust your expenses first.`,
+        });
+        return;
+      }
+    }
+
     const docRef = doc(firestore, 'users', user.uid, 'transactions', transaction.id);
     deleteDocumentNonBlocking(docRef);
     toast({
@@ -127,6 +163,34 @@ export function DataTableRowActions<TData>({
 
   const onEditSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user || !firestore || !transaction.id || isExpired) return;
+
+    // Calculate balance impact of the edit
+    let balanceAfterEdit = currentBalance;
+
+    // Reverse the original transaction
+    if (transaction.type === 'income') {
+      balanceAfterEdit -= transaction.amount;
+    } else {
+      balanceAfterEdit += transaction.amount;
+    }
+
+    // Apply the new transaction
+    if (values.type === 'income') {
+      balanceAfterEdit += values.amount;
+    } else {
+      balanceAfterEdit -= values.amount;
+    }
+
+    // Check if the edit would cause negative balance
+    if (balanceAfterEdit < 0) {
+      toast({
+        variant: "destructive",
+        title: "Insufficient Balance",
+        description: `This change would result in a negative balance of ${currencySymbol}${Math.abs(balanceAfterEdit).toFixed(2)}. Your current balance is ${currencySymbol}${currentBalance.toFixed(2)}.`,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const docRef = doc(firestore, 'users', user.uid, 'transactions', transaction.id);
@@ -167,9 +231,9 @@ export function DataTableRowActions<TData>({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
               onClick={() => setIsViewOpen(true)}
             >
@@ -182,9 +246,9 @@ export function DataTableRowActions<TData>({
         <Tooltip>
           <TooltipTrigger asChild>
             <span>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 disabled={isExpired}
                 className={cn(
                   "h-8 w-8 text-amber-500 hover:text-amber-700 hover:bg-amber-50",
@@ -200,15 +264,15 @@ export function DataTableRowActions<TData>({
             {isExpired ? "Edit locked after 24 hours" : "Edit Transaction"}
           </TooltipContent>
         </Tooltip>
-        
+
         <AlertDialog>
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
                 <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     disabled={isExpired}
                     className={cn(
                       "h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50",
@@ -236,7 +300,7 @@ export function DataTableRowActions<TData>({
               <AlertDialogCancel className="rounded-xl border-[#cbd5e1] h-12 font-bold text-[#64748b] hover:bg-[#f8fafc]">
                 Cancel
               </AlertDialogCancel>
-              <AlertDialogAction 
+              <AlertDialogAction
                 onClick={handleDelete}
                 className="rounded-xl bg-red-500 hover:bg-red-600 h-12 font-bold text-white shadow-lg shadow-red-200"
               >
@@ -293,7 +357,7 @@ export function DataTableRowActions<TData>({
                 This transaction is over 24 hours old and can no longer be edited or deleted.
               </div>
             )}
-            <Button 
+            <Button
               className="w-full h-12 rounded-xl bg-muted text-[#475569] font-bold hover:bg-[#e2e8f0] transition-colors"
               onClick={() => setIsViewOpen(false)}
             >
@@ -314,6 +378,12 @@ export function DataTableRowActions<TData>({
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onEditSubmit)} className="px-10 pb-10 space-y-6 pt-6">
+              {/* Balance Info */}
+              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">Current Balance</span>
+                <span className="text-lg font-black text-blue-900">{currencySymbol}{currentBalance.toFixed(2)}</span>
+              </div>
+
               <FormField
                 control={form.control}
                 name="categoryName"
@@ -322,16 +392,16 @@ export function DataTableRowActions<TData>({
                     <FormLabel className="text-sm font-bold text-[#334155] uppercase tracking-wider ml-1">Category</FormLabel>
                     <div className="relative">
                       <FormControl>
-                        <Input 
-                          placeholder="Enter category name" 
+                        <Input
+                          placeholder="Enter category name"
                           className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all pr-14"
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button 
+                            <Button
                               type="button"
                               variant="ghost"
                               size="icon"
@@ -340,8 +410,8 @@ export function DataTableRowActions<TData>({
                               <List className="h-5 w-5" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent 
-                            className="w-[300px] p-2 rounded-2xl shadow-xl border-muted bg-white overflow-hidden" 
+                          <DropdownMenuContent
+                            className="w-[300px] p-2 rounded-2xl shadow-xl border-muted bg-white overflow-hidden"
                             align="end"
                             side="bottom"
                           >
@@ -390,12 +460,12 @@ export function DataTableRowActions<TData>({
                         {currencySymbol || '₹'}
                       </div>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="number"
                           step="0.01"
-                          placeholder="0.00" 
+                          placeholder="0.00"
                           className="rounded-r-xl rounded-l-none h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-lg font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                     </div>
@@ -411,10 +481,10 @@ export function DataTableRowActions<TData>({
                   <FormItem className="space-y-2">
                     <FormLabel className="text-sm font-bold text-[#334155] uppercase tracking-wider ml-1">Description (Optional)</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Add a note for this transaction..." 
+                      <Textarea
+                        placeholder="Add a note for this transaction..."
                         className="min-h-[100px] rounded-xl border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none p-4"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -422,8 +492,8 @@ export function DataTableRowActions<TData>({
                 )}
               />
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isSubmitting}
                 className="w-full h-14 bg-gradient-to-tr from-primary to-accent hover:opacity-95 text-white font-bold text-lg rounded-2xl transition-all shadow-xl mt-4 border-0 active:scale-[0.98]"
               >

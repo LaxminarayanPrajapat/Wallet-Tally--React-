@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { 
-  Search, 
-  Loader2, 
-  Eye, 
-  CheckCircle, 
+import {
+  Search,
+  Loader2,
+  Eye,
+  CheckCircle,
   XCircle,
-  Trash2, 
+  Trash2,
   MessageSquare,
   Star,
   Info,
@@ -21,13 +21,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
 import {
   Select,
@@ -63,7 +63,7 @@ export default function AdminFeedbackPage() {
   const firestore = useFirestore();
   const { user, isUserLoading: isAuthLoading } = useUser();
   const { toast } = useToast();
-  
+
   // UI Filter State
   const [ratingFilter, setRatingFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -73,7 +73,7 @@ export default function AdminFeedbackPage() {
   // Modals State
   const [selectedFeedback, setSelectedFeedback] = useState<any>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  
+
   // Deletion Modal State
   const [feedbackToDelete, setFeedbackToDelete] = useState<any>(null);
   const [isDeleteReasonOpen, setIsDeleteReasonOpen] = useState(false);
@@ -130,20 +130,20 @@ export default function AdminFeedbackPage() {
         userName: u?.name || 'Unknown User',
         userEmail: u?.email || 'unknown@example.com',
         isApproved,
-        displayStatus: isApproved ? 'Approved' : 'Not Approved'
+        displayStatus: isApproved ? 'Approved' : 'Pending'
       };
     }).filter(f => {
       const matchesRating = appliedFilters.rating === 'all' || Number(f.rating) === Number(appliedFilters.rating);
-      
-      const matchesStatus = appliedFilters.status === 'all' || 
+
+      const matchesStatus = appliedFilters.status === 'all' ||
         (appliedFilters.status === 'approved' && f.isApproved) ||
         (appliedFilters.status === 'not-approved' && !f.isApproved);
 
-      const matchesSearch = 
+      const matchesSearch =
         f.userName.toLowerCase().includes(appliedFilters.search.toLowerCase()) ||
         f.userEmail.toLowerCase().includes(appliedFilters.search.toLowerCase()) ||
         f.comment?.toLowerCase().includes(appliedFilters.search.toLowerCase());
-      
+
       return matchesRating && matchesStatus && matchesSearch;
     }).sort((a, b) => {
       const dateA = getSafeDate(a.updatedAt)?.getTime() || 0;
@@ -171,17 +171,17 @@ export default function AdminFeedbackPage() {
       // Hardcoded 'current' document ID as per feedback-card logic
       const feedbackRef = doc(firestore, 'users', feedback.userId, 'feedback', 'current');
       await updateDoc(feedbackRef, { isApproved: newStatus });
-      
+
       if (newStatus) {
         await sendFeedbackApprovalEmail(feedback.userEmail, feedback.userName);
-        toast({ 
-          title: "Feedback Approved", 
-          description: "Appreciation email sent and review featured." 
+        toast({
+          title: "Feedback Approved",
+          description: "Appreciation email sent and review featured."
         });
       } else {
-        toast({ 
-          title: "Feedback Disapproved", 
-          description: "Removed from public showcase." 
+        toast({
+          title: "Feedback Disapproved",
+          description: "Removed from public showcase."
         });
       }
     } catch (error: any) {
@@ -197,18 +197,18 @@ export default function AdminFeedbackPage() {
 
   const handleConfirmDelete = async () => {
     if (!firestore || !feedbackToDelete?.userId || !deleteReason.trim()) return;
-    
+
     setIsActionProcessing(true);
     try {
       const feedbackRef = doc(firestore, 'users', feedbackToDelete.userId, 'feedback', 'current');
       await sendFeedbackDeletionEmail(feedbackToDelete.userEmail, feedbackToDelete.userName, deleteReason);
       await deleteDoc(feedbackRef);
-      
-      toast({ 
-        title: "Feedback Removed", 
-        description: `Deleted and notification sent to ${feedbackToDelete.userEmail}` 
+
+      toast({
+        title: "Feedback Removed",
+        description: `Deleted and notification sent to ${feedbackToDelete.userEmail}`
       });
-      
+
       setIsDeleteReasonOpen(false);
       setFeedbackToDelete(null);
     } catch (error: any) {
@@ -232,30 +232,24 @@ export default function AdminFeedbackPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700">
-      
-      {/* Header Card */}
-      <Card className="shadow-sm border border-slate-100 rounded-2xl overflow-hidden bg-white">
-        <CardContent className="p-8">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <h1 className="text-4xl font-black text-[#1e3a8a] tracking-tight">Review Moderation</h1>
-              <p className="text-slate-500 font-medium">
-                Manage how feedback is displayed to the public
-              </p>
-              <p className="text-sm font-bold text-cyan-500 pt-1 flex items-center gap-2">
-                <Info className="w-4 h-4" />
-                Approved reviews trigger appreciation emails. Deletions require a reason sent to users.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-4 md:space-y-6 animate-in fade-in duration-700">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#1e293b]">Review Moderation</h1>
+          <p className="text-xs md:text-sm text-slate-500 mt-1">Manage how feedback is displayed to the public</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 p-3 md:p-4 bg-blue-50 text-blue-700 rounded-xl text-xs md:text-sm font-medium border border-blue-100">
+        <Info className="w-4 h-4 shrink-0" />
+        <span>Approved reviews trigger appreciation emails. Deletions require a reason sent to users.</span>
+      </div>
 
       {/* Filter Card */}
-      <Card className="shadow-sm border border-slate-100 rounded-2xl bg-white overflow-hidden">
-        <CardContent className="p-8 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 items-end">
+      <Card className="shadow-lg border-0 rounded-2xl bg-white overflow-hidden">
+        <CardContent className="p-4 md:p-6 space-y-4 md:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-6 items-end">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-600">Rating</label>
               <Select value={ratingFilter} onValueChange={setRatingFilter}>
@@ -297,14 +291,14 @@ export default function AdminFeedbackPage() {
             </div>
             <div className="space-y-2 lg:col-span-1">
               <label className="text-sm font-bold text-slate-600">Search</label>
-              <Input 
-                placeholder="Username or email..." 
+              <Input
+                placeholder="Username or email..."
                 className="h-11 rounded-lg border-slate-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button 
+            <Button
               onClick={handleApplyFilters}
               className="h-11 bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white rounded-lg px-8 font-bold flex items-center justify-center gap-2"
             >
@@ -314,18 +308,18 @@ export default function AdminFeedbackPage() {
           </div>
 
           {/* Feedback Table */}
-          <div className="rounded-lg border border-slate-100 overflow-hidden">
+          <div className="rounded-lg border border-slate-100 overflow-x-auto">
             <Table>
               <TableHeader className="bg-[#f1f5f9]">
                 <TableRow className="hover:bg-transparent border-0">
-                  <TableHead className="w-16 font-bold text-[#1e3a8a]">ID</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">User</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Email</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Rating</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Feedback Preview</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Date</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Status</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a] text-center">Actions</TableHead>
+                  <TableHead className="w-20 font-bold text-[#1e3a8a]">ID</TableHead>
+                  <TableHead className="min-w-[140px] font-bold text-[#1e3a8a]">User</TableHead>
+                  <TableHead className="min-w-[200px] font-bold text-[#1e3a8a]">Email</TableHead>
+                  <TableHead className="w-32 font-bold text-[#1e3a8a]">Rating</TableHead>
+                  <TableHead className="min-w-[200px] font-bold text-[#1e3a8a]">Feedback Preview</TableHead>
+                  <TableHead className="w-32 font-bold text-[#1e3a8a]">Date</TableHead>
+                  <TableHead className="w-36 font-bold text-[#1e3a8a]">Status</TableHead>
+                  <TableHead className="w-40 font-bold text-[#1e3a8a] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -352,8 +346,8 @@ export default function AdminFeedbackPage() {
                         </TableCell>
                         <TableCell>
                           <Badge className={cn(
-                            "text-[9px] font-black uppercase tracking-wider h-5 px-2 border-0",
-                            f.isApproved ? "bg-emerald-500 text-white" : "bg-slate-400 text-white"
+                            "text-[9px] font-bold uppercase tracking-wide h-5 px-2.5 border-0 whitespace-nowrap",
+                            f.isApproved ? "bg-emerald-500 text-white" : "bg-amber-500 text-white"
                           )}>
                             {f.displayStatus}
                           </Badge>
@@ -363,9 +357,9 @@ export default function AdminFeedbackPage() {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => handleShowDetail(f)}
                                     className="h-8 w-8 bg-[#23414d] hover:bg-[#23414d]/90 text-white rounded-lg flex items-center justify-center"
                                   >
@@ -377,9 +371,9 @@ export default function AdminFeedbackPage() {
 
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => handleToggleApproval(f)}
                                     className={cn(
                                       "h-8 w-8 text-white rounded-lg flex items-center justify-center transition-colors",
@@ -394,9 +388,9 @@ export default function AdminFeedbackPage() {
 
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => initiateDelete(f)}
                                     className="h-8 w-8 bg-[#dc2626] hover:bg-[#dc2626]/90 text-white rounded-lg flex items-center justify-center"
                                   >
@@ -434,7 +428,7 @@ export default function AdminFeedbackPage() {
             <DialogTitle className="text-2xl font-black text-[#1e3a8a]">Feedback Showcase</DialogTitle>
             <DialogDescription className="font-bold text-slate-400 pt-1">Detailed user sentiment report</DialogDescription>
           </DialogHeader>
-          
+
           {selectedFeedback && (
             <div className="space-y-6 pt-6">
               <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
@@ -469,7 +463,7 @@ export default function AdminFeedbackPage() {
                 Submitted on {getSafeDate(selectedFeedback.updatedAt) ? format(getSafeDate(selectedFeedback.updatedAt)!, 'PPP') : 'Unknown Date'}
               </div>
 
-              <Button 
+              <Button
                 onClick={() => setIsDetailOpen(false)}
                 className="w-full h-12 bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white font-bold rounded-xl shadow-lg shadow-blue-100 mt-2"
               >
@@ -491,11 +485,11 @@ export default function AdminFeedbackPage() {
               A notification will be sent to the user with your explanation.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-6 pt-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Reason for Removal</label>
-              <Textarea 
+              <Textarea
                 placeholder="e.g., Inappropriate language, false information, or spam content..."
                 className="min-h-[120px] rounded-2xl border-slate-200 focus:ring-red-500 focus:border-red-500 p-4 italic text-sm"
                 value={deleteReason}
@@ -504,7 +498,7 @@ export default function AdminFeedbackPage() {
             </div>
 
             <DialogFooter className="flex-col sm:flex-col gap-3">
-              <Button 
+              <Button
                 onClick={handleConfirmDelete}
                 disabled={!deleteReason.trim() || isActionProcessing}
                 className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg shadow-red-100 flex items-center justify-center gap-2"
@@ -512,7 +506,7 @@ export default function AdminFeedbackPage() {
                 {isActionProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 Confirm Deletion & Notify User
               </Button>
-              <Button 
+              <Button
                 variant="ghost"
                 onClick={() => setIsDeleteReasonOpen(false)}
                 className="w-full font-bold text-slate-400 hover:text-slate-600"

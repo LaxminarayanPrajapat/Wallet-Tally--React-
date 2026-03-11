@@ -34,7 +34,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useFirestore, useUser, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
@@ -49,9 +49,9 @@ type AddTransactionProps = {
   defaultType?: 'income' | 'expense';
 };
 
-export function AddTransactionSheet({ 
-  children, 
-  defaultType = 'expense' 
+export function AddTransactionSheet({
+  children,
+  defaultType = 'expense'
 }: AddTransactionProps) {
   const currencySymbol = useCurrencySymbol();
   const [open, setOpen] = useState(false);
@@ -62,7 +62,10 @@ export function AddTransactionSheet({
 
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return collection(firestore, 'users', user.uid, 'transactions');
+    return query(
+      collection(firestore, 'users', user.uid, 'transactions'),
+      orderBy('date', 'desc')
+    );
   }, [firestore, user]);
 
   const { data: transactions } = useCollection(transactionsQuery);
@@ -102,7 +105,7 @@ export function AddTransactionSheet({
       });
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
       const colRef = collection(firestore, 'users', user.uid, 'transactions');
@@ -133,10 +136,10 @@ export function AddTransactionSheet({
   }
 
   const handleCategorySelect = (categoryName: string) => {
-    form.setValue('categoryName', categoryName, { 
+    form.setValue('categoryName', categoryName, {
       shouldValidate: true,
       shouldDirty: true,
-      shouldTouch: true 
+      shouldTouch: true
     });
   };
 
@@ -156,6 +159,12 @@ export function AddTransactionSheet({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="px-10 pb-10 space-y-6 pt-6">
+            {/* Balance Info */}
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100">
+              <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">Current Balance</span>
+              <span className="text-lg font-black text-blue-900">{currencySymbol}{currentBalance.toFixed(2)}</span>
+            </div>
+
             <FormField
               control={form.control}
               name="categoryName"
@@ -164,16 +173,16 @@ export function AddTransactionSheet({
                   <FormLabel className="text-sm font-bold text-[#334155] uppercase tracking-wider ml-1">Category</FormLabel>
                   <div className="relative">
                     <FormControl>
-                      <Input 
-                        placeholder="Enter category name" 
+                      <Input
+                        placeholder="Enter category name"
                         className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all pr-14"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button 
+                          <Button
                             type="button"
                             variant="ghost"
                             size="icon"
@@ -182,8 +191,8 @@ export function AddTransactionSheet({
                             <List className="h-5 w-5" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent 
-                          className="w-[300px] p-2 rounded-2xl shadow-xl border-muted bg-white overflow-hidden" 
+                        <DropdownMenuContent
+                          className="w-[300px] p-2 rounded-2xl shadow-xl border-muted bg-white overflow-hidden"
                           align="end"
                           side="bottom"
                         >
@@ -238,12 +247,12 @@ export function AddTransactionSheet({
                       {currencySymbol || '₹'}
                     </div>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
-                        placeholder="0.00" 
+                        placeholder="0.00"
                         className="rounded-r-xl rounded-l-none h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-lg font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                   </div>
@@ -259,10 +268,10 @@ export function AddTransactionSheet({
                 <FormItem className="space-y-2">
                   <FormLabel className="text-sm font-bold text-[#334155] uppercase tracking-wider ml-1">Description (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Add a note for this transaction..." 
+                    <Textarea
+                      placeholder="Add a note for this transaction..."
                       className="min-h-[100px] rounded-xl border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none p-4"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage className="ml-1" />
@@ -270,8 +279,8 @@ export function AddTransactionSheet({
               )}
             />
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting}
               className="w-full h-14 bg-gradient-to-tr from-primary to-accent hover:opacity-95 text-white font-bold text-lg rounded-2xl transition-all shadow-xl mt-4 border-0 active:scale-[0.98]"
             >

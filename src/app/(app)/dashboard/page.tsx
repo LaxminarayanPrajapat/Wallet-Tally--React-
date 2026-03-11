@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
   const totals = useMemo(() => {
     if (!transactions) return { income: 0, expenses: 0, balance: 0 };
-    
+
     const now = new Date();
     const startOfCurrent = startOfMonth(now);
     const endOfCurrent = endOfMonth(now);
@@ -68,7 +68,7 @@ export default function DashboardPage() {
     const allTimeBalance = transactions.reduce((acc, t) => {
       return acc + (t.type === 'income' ? (t.amount || 0) : -(t.amount || 0));
     }, 0);
-    
+
     return {
       income,
       expenses,
@@ -98,9 +98,9 @@ export default function DashboardPage() {
   const isLastMonthChart = isSameMonth(chartDate, new Date());
 
   return (
-    <div className="max-w-7xl mx-auto w-full space-y-6 relative">
+    <div className="max-w-7xl mx-auto w-full space-y-4 md:space-y-6 pb-4 md:pb-0">
       {/* Summary Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
         <SummaryCard
           title="Total Balance"
           value={totals.balance}
@@ -125,36 +125,36 @@ export default function DashboardPage() {
       <RecentTransactions transactions={transactions || []} />
 
       {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 pb-4">
         <Card className="shadow-md">
-          <CardHeader className="py-4 flex flex-row items-center justify-between">
+          <CardHeader className="py-3 md:py-4 px-4 md:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="space-y-1">
-              <CardTitle className="text-lg font-bold text-[#1e293b]">Income vs Expenses</CardTitle>
+              <CardTitle className="text-base md:text-lg font-bold text-[#1e293b]">Spending by Category</CardTitle>
               <p className="text-xs text-muted-foreground font-medium">{format(chartDate, 'MMMM yyyy')}</p>
             </div>
             <div className="flex items-center gap-1.5 bg-[#f1f5f9] p-1 rounded-lg">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 rounded-md hover:bg-white"
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 md:h-8 md:w-8 rounded-md hover:bg-white"
                 disabled={isFirstMonthChart}
                 onClick={() => setChartDate(subMonths(chartDate, 1))}
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 rounded-md hover:bg-white"
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 md:h-8 md:w-8 rounded-md hover:bg-white"
                 disabled={isLastMonthChart}
                 onClick={() => setChartDate(addMonths(chartDate, 1))}
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="h-[400px] flex items-center justify-center p-0">
-             <SpendingByCategoryChart transactions={chartTransactions} />
+          <CardContent className="h-[300px] md:h-[400px] flex items-center justify-center p-2 md:p-4">
+            <SpendingByCategoryChart transactions={chartTransactions} />
           </CardContent>
         </Card>
 

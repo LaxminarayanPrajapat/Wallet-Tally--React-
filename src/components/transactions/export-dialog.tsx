@@ -1,12 +1,12 @@
 
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import React, { useState, useMemo } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogDescription
 } from '@/components/ui/dialog';
@@ -19,18 +19,27 @@ import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useCurrencySymbol } from '@/hooks/use-currency';
 import { exportTransactionsToPdf } from '@/app/actions/export';
-import { format, startOfDay, endOfDay, isBefore } from 'date-fns';
+import { format, startOfDay, endOfDay, isBefore, isAfter } from 'date-fns';
 
 export function ExportDialog() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const currencySymbol = useCurrencySymbol();
-  
+
   const [open, setOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [startDate, setStartDate] = useState(format(new Date(), 'yyyy-MM-01'));
   const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+
+  const accountCreationDate = useMemo(() => {
+    if (user?.metadata?.creationTime) {
+      return format(new Date(user.metadata.creationTime), 'yyyy-MM-dd');
+    }
+    return format(new Date(), 'yyyy-MM-dd');
+  }, [user]);
+
+  const today = format(new Date(), 'yyyy-MM-dd');
 
   const handleExport = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,12 +47,35 @@ export function ExportDialog() {
 
     const start = startOfDay(new Date(startDate));
     const end = endOfDay(new Date(endDate));
+    const accountCreation = startOfDay(new Date(accountCreationDate));
+    const currentDate = endOfDay(new Date());
 
+    // Validate: start date should not be less than user registered date
+    if (isBefore(start, accountCreation)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Start Date",
+        description: "Start date cannot be earlier than your account creation date.",
+      });
+      return;
+    }
+
+    // Validate: end date should be greater or equal than start date
     if (isBefore(end, start)) {
       toast({
         variant: "destructive",
         title: "Invalid Date Range",
-        description: "The end date cannot be earlier than the start date.",
+        description: "End date cannot be earlier than the start date.",
+      });
+      return;
+    }
+
+    // Validate: end date should not be greater than current date
+    if (isAfter(end, currentDate)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid End Date",
+        description: "End date cannot be in the future.",
       });
       return;
     }
@@ -59,9 +91,7 @@ export function ExportDialog() {
       );
 
       const querySnapshot = await getDocs(q);
-      
-      // CRITICAL FIX: Convert transactions to plain objects for Server Action serialization
-      // Firestore Timestamps have toJSON/toDate methods which Next.js Server Actions don't allow
+
       const transactions = querySnapshot.docs.map(doc => {
         const data = doc.data();
         return {
@@ -70,9 +100,8 @@ export function ExportDialog() {
           type: data.type,
           category: data.category,
           description: data.description,
-          // Convert Timestamp to ISO string for safe serialization
-          date: data.date && typeof data.date.toDate === 'function' 
-            ? data.date.toDate().toISOString() 
+          date: data.date && typeof data.date.toDate === 'function'
+            ? data.date.toDate().toISOString()
             : null
         };
       });
@@ -118,9 +147,9 @@ export function ExportDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="default" 
-          size="sm" 
+        <Button
+          variant="default"
+          size="sm"
           className="ml-auto bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white gap-2 px-4 rounded-md font-bold shadow-sm border-0"
         >
           <Download className="h-4 w-4" />
@@ -145,6 +174,8 @@ export function ExportDialog() {
                 id="startDate"
                 type="date"
                 value={startDate}
+                min={accountCreationDate}
+                max={today}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="rounded-xl border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 required
@@ -156,6 +187,8 @@ export function ExportDialog() {
                 id="endDate"
                 type="date"
                 value={endDate}
+                min={startDate}
+                max={today}
                 onChange={(e) => setEndDate(e.target.value)}
                 className="rounded-xl border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 required

@@ -14,7 +14,7 @@ export function FeedbackCard() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  
+
   const feedbackDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid, 'feedback', 'current');
@@ -36,20 +36,35 @@ export function FeedbackCard() {
 
   const handleSubmit = async () => {
     if (!user || !firestore) return;
-    
+
     setIsSubmitting(true);
     try {
       const docRef = doc(firestore, 'users', user.uid, 'feedback', 'current');
+
+      // Check if feedback content has changed and was previously approved
+      const hasContentChanged = existingFeedback && (
+        existingFeedback.rating !== rating ||
+        existingFeedback.comment !== feedback
+      );
+
+      const wasApproved = existingFeedback?.isApproved === true;
+
+      // If content changed and was approved, set isApproved to false
+      const shouldDisapprove = hasContentChanged && wasApproved;
+
       await setDoc(docRef, {
         userId: user.uid,
         rating,
         comment: feedback,
         updatedAt: serverTimestamp(),
+        ...(shouldDisapprove && { isApproved: false })
       }, { merge: true });
 
       toast({
         title: "Feedback Saved",
-        description: "Your feedback has been updated successfully!",
+        description: shouldDisapprove
+          ? "Your feedback has been updated. It will need admin re-approval to be featured."
+          : "Your feedback has been updated successfully!",
       });
     } catch (error: any) {
       toast({

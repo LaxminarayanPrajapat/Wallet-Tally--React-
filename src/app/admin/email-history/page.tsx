@@ -2,14 +2,14 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { 
-  Search, 
-  Loader2, 
-  Eye, 
-  Mail, 
-  Star, 
-  AlertTriangle, 
-  MessageSquareOff, 
+import {
+  Search,
+  Loader2,
+  Eye,
+  Mail,
+  Star,
+  AlertTriangle,
+  MessageSquareOff,
   UserMinus,
   Calendar,
   CheckCircle2,
@@ -17,7 +17,8 @@ import {
   Hash,
   User,
   Type,
-  KeyRound
+  KeyRound,
+  Info
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
@@ -25,13 +26,13 @@ import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
 import {
   Select,
@@ -57,7 +58,7 @@ import { cn } from '@/lib/utils';
 export default function AdminEmailHistoryPage() {
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
-  
+
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -90,11 +91,11 @@ export default function AdminEmailHistoryPage() {
     return logs.filter(l => {
       const matchesType = appliedFilters.type === 'all' || l.type === appliedFilters.type;
       const matchesStatus = appliedFilters.status === 'all' || l.status === appliedFilters.status;
-      const matchesSearch = 
+      const matchesSearch =
         l.recipientEmail.toLowerCase().includes(appliedFilters.search.toLowerCase()) ||
         l.recipientName?.toLowerCase().includes(appliedFilters.search.toLowerCase()) ||
         l.subject.toLowerCase().includes(appliedFilters.search.toLowerCase());
-      
+
       return matchesType && matchesStatus && matchesSearch;
     });
   }, [logs, appliedFilters]);
@@ -152,25 +153,23 @@ export default function AdminEmailHistoryPage() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      
-      <Card className="shadow-sm border border-slate-100 rounded-2xl overflow-hidden bg-white">
-        <CardContent className="p-8">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <h1 className="text-4xl font-black text-[#1e3a8a] tracking-tight">Email History</h1>
-              <p className="text-slate-500 font-bold">
-                Total Logs: {logs?.length || 0} communications | Viewing: {filteredLogs.length}
-              </p>
-              <p className="text-sm font-bold text-cyan-500 pt-1">
-                Comprehensive audit trail including registration OTPs, password resets, and administrative actions.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-4 md:space-y-6 animate-in fade-in duration-700">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#1e293b]">Email History</h1>
+          <p className="text-xs md:text-sm text-slate-500 mt-1">
+            Total Logs: {logs?.length || 0} communications | Viewing: {filteredLogs.length}
+          </p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="flex items-center gap-2 p-3 md:p-4 bg-blue-50 text-blue-700 rounded-xl text-xs md:text-sm font-medium border border-blue-100">
+        <Info className="w-4 h-4 shrink-0" />
+        <span>Comprehensive audit trail including registration OTPs, password resets, and administrative actions.</span>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         <SummaryCard icon={Star} count={stats.appreciation} label="Appreciation" color="emerald" />
         <SummaryCard icon={AlertTriangle} count={stats.warning} label="Warning" color="amber" />
         <SummaryCard icon={MessageSquareOff} count={stats.feedbackDeletion} label="Deletion" color="rose" />
@@ -179,9 +178,9 @@ export default function AdminEmailHistoryPage() {
         <SummaryCard icon={KeyRound} count={stats.reset} label="Pwd Reset" color="purple" />
       </div>
 
-      <Card className="shadow-sm border border-slate-100 rounded-2xl bg-white overflow-hidden">
-        <CardContent className="p-8 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+      <Card className="shadow-lg border-0 rounded-2xl bg-white overflow-hidden">
+        <CardContent className="p-4 md:p-6 space-y-4 md:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 items-end">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-600">Email Type</label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -214,14 +213,14 @@ export default function AdminEmailHistoryPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-600">Search</label>
-              <Input 
-                placeholder="Email, name, or subject..." 
+              <Input
+                placeholder="Email, name, or subject..."
                 className="h-11 rounded-lg border-slate-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button 
+            <Button
               onClick={handleApplyFilters}
               className="h-11 bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white rounded-lg px-8 font-bold flex items-center justify-center gap-2"
             >
@@ -230,17 +229,17 @@ export default function AdminEmailHistoryPage() {
             </Button>
           </div>
 
-          <div className="rounded-lg border border-slate-100 overflow-hidden">
+          <div className="rounded-lg border border-slate-100 overflow-x-auto">
             <Table>
               <TableHeader className="bg-[#f1f5f9]">
                 <TableRow className="hover:bg-transparent border-0">
-                  <TableHead className="w-16 font-bold text-[#1e3a8a]">ID</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Type</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Recipient</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Subject</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Status</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a]">Date</TableHead>
-                  <TableHead className="font-bold text-[#1e3a8a] text-center">Actions</TableHead>
+                  <TableHead className="w-20 font-bold text-[#1e3a8a]">ID</TableHead>
+                  <TableHead className="min-w-[180px] font-bold text-[#1e3a8a]">Type</TableHead>
+                  <TableHead className="min-w-[180px] font-bold text-[#1e3a8a]">Recipient</TableHead>
+                  <TableHead className="min-w-[200px] font-bold text-[#1e3a8a]">Subject</TableHead>
+                  <TableHead className="w-32 font-bold text-[#1e3a8a]">Status</TableHead>
+                  <TableHead className="w-32 font-bold text-[#1e3a8a]">Date</TableHead>
+                  <TableHead className="w-28 font-bold text-[#1e3a8a] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -251,7 +250,7 @@ export default function AdminEmailHistoryPage() {
                     // Calculate sequence ID based on global index in 'logs' to keep latest at top with highest ID
                     const globalIndex = logs?.indexOf(log) ?? 0;
                     const displayId = 1000 + (logs?.length || 0) - globalIndex;
-                    
+
                     return (
                       <TableRow key={log.id} className="hover:bg-slate-50 border-b border-slate-50 last:border-0 group">
                         <TableCell className="text-slate-600 font-medium">#{displayId}</TableCell>
@@ -289,9 +288,9 @@ export default function AdminEmailHistoryPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-center">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               onClick={() => { setSelectedLog(log); setIsDetailOpen(true); }}
                               className="h-8 w-8 bg-[#23414d] hover:bg-[#23414d]/90 text-white rounded-lg flex items-center justify-center shadow-sm"
                             >
@@ -326,14 +325,14 @@ export default function AdminEmailHistoryPage() {
             </DialogTitle>
             <DialogDescription className="font-bold text-slate-400">Audit trail for communication #{selectedLog?.id?.slice(-4)}</DialogDescription>
           </DialogHeader>
-          
+
           {selectedLog && (
             <div className="space-y-6 pt-6">
               <div className="grid grid-cols-1 gap-4">
                 <DetailItem icon={User} label="Recipient" value={`${selectedLog.recipientName} <${selectedLog.recipientEmail}>`} />
                 <DetailItem icon={Type} label="Email Type" badge={selectedLog.type} badgeColor={getTypeColor(selectedLog.type)} />
                 <DetailItem icon={Hash} label="Subject" value={selectedLog.subject} />
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</p>
@@ -362,7 +361,7 @@ export default function AdminEmailHistoryPage() {
                 Dispatched on {getSafeDate(selectedLog.sentAt) ? format(getSafeDate(selectedLog.sentAt)!, 'PPP p') : 'Unknown Date'}
               </div>
 
-              <Button 
+              <Button
                 onClick={() => setIsDetailOpen(false)}
                 className="w-full h-12 bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white font-bold rounded-xl shadow-lg mt-2"
               >
@@ -394,21 +393,23 @@ function DetailItem({ icon: Icon, label, value, badge, badgeColor }: { icon: any
 
 function SummaryCard({ icon: Icon, count, label, color }: { icon: any, count: number, label: string, color: string }) {
   const colorMap: Record<string, string> = {
-    emerald: 'text-emerald-600 border-l-emerald-500',
-    amber: 'text-amber-600 border-l-amber-500',
-    rose: 'text-rose-600 border-l-rose-500',
-    slate: 'text-slate-600 border-l-slate-700',
-    blue: 'text-blue-600 border-l-blue-600',
-    purple: 'text-purple-600 border-l-purple-600'
+    emerald: 'from-emerald-500/10 to-emerald-500/5 text-emerald-600',
+    amber: 'from-amber-500/10 to-amber-500/5 text-amber-600',
+    rose: 'from-rose-500/10 to-rose-500/5 text-rose-600',
+    slate: 'from-slate-500/10 to-slate-500/5 text-slate-600',
+    blue: 'from-blue-500/10 to-blue-500/5 text-blue-600',
+    purple: 'from-purple-500/10 to-purple-500/5 text-purple-600'
   };
 
   return (
-    <Card className={cn("shadow-sm border-0 border-l-[4px] rounded-xl bg-white", colorMap[color])}>
+    <Card className="shadow-md border-0 rounded-xl bg-white hover:shadow-lg transition-all">
       <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-        <Icon className="w-6 h-6 opacity-80 mb-2" strokeWidth={2.5} />
+        <div className={cn("w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center mb-2", colorMap[color])}>
+          <Icon className="w-5 h-5" strokeWidth={2.5} />
+        </div>
         <div>
-          <div className="text-2xl font-black text-[#1e293b] tracking-tighter">{count}</div>
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">{label}</p>
+          <div className="text-2xl font-bold text-[#1e293b]">{count}</div>
+          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">{label}</p>
         </div>
       </CardContent>
     </Card>
