@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, LogOut, Plus, Minus } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 
@@ -16,6 +16,14 @@ export function AppHeader() {
   const router = useRouter();
   const auth = useAuth();
   const { user } = useUser();
+  const [avatarKey, setAvatarKey] = useState(0);
+
+  // Force avatar refresh when user photoURL changes
+  useEffect(() => {
+    if (user?.photoURL) {
+      setAvatarKey(prev => prev + 1);
+    }
+  }, [user?.photoURL]);
 
   const handleLogout = async () => {
     try {
@@ -28,7 +36,7 @@ export function AppHeader() {
     }
   };
 
-  const defaultAvatar = 'https://api.dicebear.com/9.x/lorelei/svg?seed=Aiden';
+  const defaultAvatar = 'https://api.dicebear.com/9.x/avataaars/svg?seed=Luna&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf';
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-white px-4 md:px-6 shadow-sm">
@@ -61,7 +69,7 @@ export function AppHeader() {
           href="/settings"
           className="flex items-center gap-2 pl-2 border-l ml-2 group md:pointer-events-none md:cursor-default"
         >
-          <Avatar className="h-9 w-9 border-2 border-primary/20 group-hover:border-primary/50 transition-colors">
+          <Avatar key={avatarKey} className="h-9 w-9 border-2 border-primary/20 group-hover:border-primary/50 transition-colors">
             <AvatarImage
               src={user?.photoURL || defaultAvatar}
               alt="User Avatar"

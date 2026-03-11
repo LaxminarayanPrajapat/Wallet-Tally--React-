@@ -693,17 +693,17 @@ function LoginPage() {
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "flex min-h-screen items-center justify-center bg-gradient-to-br from-primary via-[#1a2e3a] to-accent p-4",
+        className: "flex min-h-screen items-center justify-center bg-gradient-to-br from-primary via-[#1a2e3a] to-accent p-3 sm:p-4 py-6 sm:py-8",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "w-full max-w-[440px] space-y-8 rounded-[2.5rem] bg-card p-10 text-card-foreground shadow-2xl",
+            className: "w-full max-w-[440px] space-y-6 sm:space-y-8 rounded-[2rem] sm:rounded-[2.5rem] bg-card p-6 sm:p-8 md:p-10 text-card-foreground shadow-2xl",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex flex-col items-center justify-center text-center space-y-4",
+                    className: "flex flex-col items-center justify-center text-center space-y-3 sm:space-y-4",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10",
+                            className: "w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Icons"].Logo, {
-                                className: "w-10 h-10"
+                                className: "w-8 h-8 sm:w-10 sm:h-10"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/login/page.tsx",
                                 lineNumber: 137,
@@ -718,7 +718,7 @@ function LoginPage() {
                             className: "space-y-1",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                    className: "text-3xl font-bold tracking-tight text-[#1a2e3a]",
+                                    className: "text-2xl sm:text-3xl font-bold tracking-tight text-[#1a2e3a]",
                                     children: "Wallet Tally"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/login/page.tsx",
@@ -726,7 +726,7 @@ function LoginPage() {
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    className: "text-muted-foreground text-sm",
+                                    className: "text-muted-foreground text-xs sm:text-sm px-2",
                                     children: "Welcome back! Please login to your account"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/login/page.tsx",
@@ -749,7 +749,7 @@ function LoginPage() {
                     ...form,
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                         onSubmit: form.handleSubmit(onSubmit),
-                        className: "space-y-6",
+                        className: "space-y-4 sm:space-y-6",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FormField"], {
                                 control: form.control,

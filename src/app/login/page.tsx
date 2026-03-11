@@ -130,24 +130,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary via-[#1a2e3a] to-accent p-4">
-      <div className="w-full max-w-[440px] space-y-8 rounded-[2.5rem] bg-card p-10 text-card-foreground shadow-2xl">
-        <div className="flex flex-col items-center justify-center text-center space-y-4">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
-            <Icons.Logo className="w-10 h-10" />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary via-[#1a2e3a] to-accent p-3 sm:p-4 py-6 sm:py-8">
+      <div className="w-full max-w-[440px] space-y-6 sm:space-y-8 rounded-[2rem] sm:rounded-[2.5rem] bg-card p-6 sm:p-8 md:p-10 text-card-foreground shadow-2xl">
+        <div className="flex flex-col items-center justify-center text-center space-y-3 sm:space-y-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
+            <Icons.Logo className="w-8 h-8 sm:w-10 sm:h-10" />
           </div>
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight text-[#1a2e3a]">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1a2e3a]">
               Wallet Tally
             </h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-xs sm:text-sm px-2">
               Welcome back! Please login to your account
             </p>
           </div>
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             <FormField
               control={form.control}
               name="loginId"

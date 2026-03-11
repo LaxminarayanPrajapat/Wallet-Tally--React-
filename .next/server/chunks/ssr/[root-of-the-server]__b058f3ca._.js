@@ -1193,33 +1193,33 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$
 ;
 ;
 ;
-// Curated seeds representing the requested personas:
+// Fresh, colorful, youth-oriented avatar seeds
 const AVATAR_SEEDS = [
-    "Aiden",
-    "Maya",
-    "Liam",
-    "Zoe",
-    "Leo",
-    "Mason",
-    "Sophia",
-    "James",
-    "Elena",
-    "Xavier",
-    "Isabella",
-    "William",
-    "Mia",
-    "Oliver",
-    "Ava",
-    "Charles",
-    "Margaret",
-    "George",
-    "Martha",
-    "Arthur",
-    "Emma",
-    "Ethan",
-    "Charlotte",
-    "Benjamin",
-    "Amelia"
+    "Luna",
+    "Phoenix",
+    "Nova",
+    "Kai",
+    "Aria",
+    "Zara",
+    "Finn",
+    "Sage",
+    "River",
+    "Sky",
+    "Atlas",
+    "Indie",
+    "Juno",
+    "Orion",
+    "Willow",
+    "Blaze",
+    "Echo",
+    "Storm",
+    "Raven",
+    "Ocean",
+    "Ember",
+    "Dash",
+    "Lyra",
+    "Ace",
+    "Jade"
 ];
 const passwordValidation = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/);
 const formSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["z"].object({
@@ -1258,7 +1258,7 @@ function RegisterPage() {
             confirmPassword: '',
             country: '',
             currency: '',
-            photoURL: `https://api.dicebear.com/9.x/lorelei/svg?seed=Aiden`
+            photoURL: `https://api.dicebear.com/9.x/avataaars/svg?seed=Luna&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`
         }
     });
     const selectedCountryCode = form.watch('country');
@@ -1371,17 +1371,17 @@ function RegisterPage() {
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-accent py-12 px-4",
+        className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-accent py-6 sm:py-12 px-3 sm:px-4",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "w-full max-w-md bg-card rounded-[2.5rem] shadow-2xl p-8 space-y-6 text-card-foreground border border-white/10 backdrop-blur-sm",
+            className: "w-full max-w-md bg-card rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 text-card-foreground border border-white/10 backdrop-blur-sm",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex flex-col items-center text-center space-y-3",
+                    className: "flex flex-col items-center text-center space-y-2 sm:space-y-3",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10",
+                            className: "w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$icons$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Icons"].Logo, {
-                                className: "w-10 h-10"
+                                className: "w-8 h-8 sm:w-10 sm:h-10"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/register/page.tsx",
                                 lineNumber: 223,
@@ -1396,7 +1396,7 @@ function RegisterPage() {
                             className: "space-y-1",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                    className: "text-3xl font-bold tracking-tight text-primary",
+                                    className: "text-2xl sm:text-3xl font-bold tracking-tight text-primary",
                                     children: "Create Account"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/register/page.tsx",
@@ -1404,7 +1404,7 @@ function RegisterPage() {
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                    className: "text-muted-foreground text-sm font-medium",
+                                    className: "text-muted-foreground text-xs sm:text-sm font-medium px-2",
                                     children: "Register by email or choose a unique username"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/register/page.tsx",
@@ -1510,7 +1510,7 @@ function RegisterPage() {
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "grid grid-cols-5 gap-3 p-2",
                                             children: AVATAR_SEEDS.map((seed)=>{
-                                                const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${seed}`;
+                                                const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
                                                 const isSelected = form.watch('photoURL') === url;
                                                 return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                     type: "button",

@@ -1,15 +1,8 @@
 {
   "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/admin/dashboard/page": "app/admin/dashboard/page.js",
-  "/forgot-password/page": "app/forgot-password/page.js",
+  "/(app)/settings/page": "app/(app)/settings/page.js",
   "/icon.svg/route": "app/icon.svg/route.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/privacy/page": "app/privacy/page.js",
-  "/register/page": "app/register/page.js",
-  "/reset-password-otp/page": "app/reset-password-otp/page.js",
-  "/reset-password/page": "app/reset-password/page.js",
-  "/support/page": "app/support/page.js",
-  "/terms/page": "app/terms/page.js"
+  "/register/page": "app/register/page.js"
 }

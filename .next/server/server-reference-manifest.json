@@ -1,42 +1,5 @@
 {
   "node": {
-    "7c6c3961767af3ee8d10937df5f4552a43f46871f3": {
-      "workers": {
-        "app/(app)/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/(app)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/export.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "exportTransactionsToPdf",
-          "filename": "src/app/actions/export.ts"
-        }
-      },
-      "layer": {
-        "app/(app)/dashboard/page": "action-browser"
-      },
-      "filename": "src/app/actions/export.ts",
-      "exportedName": "exportTransactionsToPdf"
-    },
-    "70491ade8981ac4f76ca77f8b1a54e8fd75d75126b": {
-      "workers": {
-        "app/forgot-password/page": {
-          "moduleId": "[project]/.next-internal/server/app/forgot-password/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/email.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "sendPasswordResetOtpEmail",
-          "filename": "src/app/actions/email.ts"
-        },
-        "app/reset-password-otp/page": {
-          "moduleId": "[project]/.next-internal/server/app/reset-password-otp/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/email.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "sendPasswordResetOtpEmail",
-          "filename": "src/app/actions/email.ts"
-        }
-      },
-      "layer": {
-        "app/forgot-password/page": "action-browser",
-        "app/reset-password-otp/page": "action-browser"
-      },
-      "filename": "src/app/actions/email.ts",
-      "exportedName": "sendPasswordResetOtpEmail"
-    },
     "60ce387093c6630fb18f57fd4c30be3a8ca7eb44b1": {
       "workers": {
         "app/register/page": {
@@ -51,6 +14,21 @@
       },
       "filename": "src/app/actions/email.ts",
       "exportedName": "sendOtpEmail"
+    },
+    "7c6c3961767af3ee8d10937df5f4552a43f46871f3": {
+      "workers": {
+        "app/(app)/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/(app)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/export.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "exportTransactionsToPdf",
+          "filename": "src/app/actions/export.ts"
+        }
+      },
+      "layer": {
+        "app/(app)/dashboard/page": "action-browser"
+      },
+      "filename": "src/app/actions/export.ts",
+      "exportedName": "exportTransactionsToPdf"
     }
   },
   "edge": {},

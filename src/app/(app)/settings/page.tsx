@@ -5,24 +5,24 @@ import Image from 'next/image';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-  updateProfile, 
-  updatePassword, 
-  EmailAuthProvider, 
-  reauthenticateWithCredential 
+import {
+  updateProfile,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import { 
-  User, 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Camera, 
-  Save, 
-  Key, 
-  Loader2, 
-  Check 
+import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Camera,
+  Save,
+  Key,
+  Loader2,
+  Check
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -45,11 +45,11 @@ import {
 import { cn } from '@/lib/utils';
 
 const AVATAR_SEEDS = [
-  "Aiden", "Maya", "Liam", "Zoe", "Leo", 
-  "Mason", "Sophia", "James", "Elena", "Xavier",
-  "Isabella", "William", "Mia", "Oliver", "Ava",
-  "Charles", "Margaret", "George", "Martha", "Arthur",
-  "Emma", "Ethan", "Charlotte", "Benjamin", "Amelia"
+  "Luna", "Phoenix", "Nova", "Kai", "Aria",
+  "Zara", "Finn", "Sage", "River", "Sky",
+  "Atlas", "Indie", "Juno", "Orion", "Willow",
+  "Blaze", "Echo", "Storm", "Raven", "Ocean",
+  "Ember", "Dash", "Lyra", "Ace", "Jade"
 ];
 
 const profileSchema = z.object({
@@ -114,7 +114,7 @@ export default function SettingsPage() {
       const credential = EmailAuthProvider.credential(user.email, values.currentPassword);
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, values.newPassword);
-      
+
       toast({ title: "Password Changed", description: "Your security credentials have been updated." });
       passwordForm.reset();
     } catch (error: any) {
@@ -130,12 +130,19 @@ export default function SettingsPage() {
 
   const onAvatarSelect = async (seed: string) => {
     if (!user) return;
-    const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${seed}`;
+    const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
     try {
       await updateProfile(user, { photoURL: url });
       await updateDoc(doc(firestore, 'users', user.uid), { photoURL: url });
+
+      // Force reload the auth state to update the UI
+      await user.reload();
+
       toast({ title: "Avatar Updated", description: "Your profile picture has been changed." });
       setIsAvatarDialogOpen(false);
+
+      // Force a page refresh to update all components
+      window.location.reload();
     } catch (error: any) {
       toast({ variant: "destructive", title: "Error", description: error.message });
     }
@@ -150,12 +157,12 @@ export default function SettingsPage() {
   }
 
   const creationDate = user?.metadata.creationTime ? new Date(user.metadata.creationTime) : new Date();
-  const defaultAvatar = `https://api.dicebear.com/9.x/lorelei/svg?seed=${AVATAR_SEEDS[0]}`;
+  const defaultAvatar = `https://api.dicebear.com/9.x/avataaars/svg?seed=${AVATAR_SEEDS[0]}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 
   return (
-    <div className="max-w-6xl mx-auto w-full py-8 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+    <div className="max-w-6xl mx-auto w-full py-4 sm:py-6 md:py-8 px-3 sm:px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+
         {/* Left Column: Profile Card */}
         <div className="lg:col-span-1">
           <Card className="rounded-[2.5rem] shadow-xl border-0 overflow-hidden bg-white">
@@ -163,10 +170,10 @@ export default function SettingsPage() {
               <div className="relative">
                 <div className="w-40 h-40 rounded-full border-[6px] border-[#f1f5f9] shadow-inner overflow-hidden relative p-1 bg-gradient-to-tr from-primary via-primary to-accent">
                   <div className="w-full h-full rounded-full bg-white overflow-hidden relative">
-                    <Image 
-                      src={user?.photoURL || defaultAvatar} 
-                      alt="Profile" 
-                      fill 
+                    <Image
+                      src={user?.photoURL || defaultAvatar}
+                      alt="Profile"
+                      fill
                       unoptimized
                       className="object-cover"
                     />
@@ -197,7 +204,7 @@ export default function SettingsPage() {
                   </DialogHeader>
                   <div className="grid grid-cols-5 gap-3 p-4">
                     {AVATAR_SEEDS.map((seed) => {
-                      const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${seed}`;
+                      const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
                       const isSelected = user?.photoURL === url;
                       return (
                         <button
@@ -227,14 +234,14 @@ export default function SettingsPage() {
 
         {/* Right Column: Settings Forms */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           {/* Profile Settings (Read Only) */}
           <Card className="rounded-[2.5rem] shadow-xl border-0 bg-white overflow-hidden">
             <CardContent className="p-10 space-y-8">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-primary">Profile Settings</h3>
               </div>
-              
+
               <Form {...profileForm}>
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -245,10 +252,10 @@ export default function SettingsPage() {
                         <FormItem>
                           <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Username</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="Your username" 
-                              className="rounded-xl h-14 border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b] cursor-not-allowed font-medium" 
-                              {...field} 
+                            <Input
+                              placeholder="Your username"
+                              className="rounded-xl h-14 border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b] cursor-not-allowed font-medium"
+                              {...field}
                               disabled
                             />
                           </FormControl>
@@ -262,11 +269,11 @@ export default function SettingsPage() {
                         <FormItem>
                           <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Email</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="email" 
-                              className="rounded-xl h-14 border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b] cursor-not-allowed font-medium" 
-                              {...field} 
-                              disabled 
+                            <Input
+                              type="email"
+                              className="rounded-xl h-14 border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b] cursor-not-allowed font-medium"
+                              {...field}
+                              disabled
                             />
                           </FormControl>
                         </FormItem>
@@ -282,7 +289,7 @@ export default function SettingsPage() {
           <Card className="rounded-[2.5rem] shadow-xl border-0 bg-white overflow-hidden">
             <CardContent className="p-10 space-y-8">
               <h3 className="text-xl font-bold text-primary">Change Password</h3>
-              
+
               <Form {...passwordForm}>
                 <form onSubmit={passwordForm.handleSubmit(onChangePassword)} className="space-y-6">
                   <FormField
@@ -293,10 +300,10 @@ export default function SettingsPage() {
                         <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Current Password</FormLabel>
                         <div className="relative">
                           <FormControl>
-                            <Input 
+                            <Input
                               type={showCurrentPassword ? "text" : "password"}
-                              className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary bg-[#f8fafc] pr-12 font-medium" 
-                              {...field} 
+                              className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary bg-[#f8fafc] pr-12 font-medium"
+                              {...field}
                               disabled={isUpdatingPassword}
                             />
                           </FormControl>
@@ -322,10 +329,10 @@ export default function SettingsPage() {
                           <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">New Password</FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input 
+                              <Input
                                 type={showNewPassword ? "text" : "password"}
-                                className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary bg-[#f8fafc] pr-12 font-medium" 
-                                {...field} 
+                                className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary bg-[#f8fafc] pr-12 font-medium"
+                                {...field}
                                 disabled={isUpdatingPassword}
                               />
                             </FormControl>
@@ -349,10 +356,10 @@ export default function SettingsPage() {
                           <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Confirm New Password</FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input 
+                              <Input
                                 type={showConfirmPassword ? "text" : "password"}
-                                className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary bg-[#f8fafc] pr-12 font-medium" 
-                                {...field} 
+                                className="rounded-xl h-14 border-[#cbd5e1] focus:ring-2 focus:ring-primary/20 focus:border-primary bg-[#f8fafc] pr-12 font-medium"
+                                {...field}
                                 disabled={isUpdatingPassword}
                               />
                             </FormControl>
@@ -370,8 +377,8 @@ export default function SettingsPage() {
                     />
                   </div>
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isUpdatingPassword}
                     className="bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white font-bold h-12 px-8 rounded-xl flex items-center gap-2 shadow-lg border-0 transition-all active:scale-95"
                   >

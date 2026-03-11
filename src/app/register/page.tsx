@@ -56,13 +56,13 @@ import { useAuth, useFirestore } from '@/firebase';
 import { sendOtpEmail } from '@/app/actions/email';
 import { cn } from '@/lib/utils';
 
-// Curated seeds representing the requested personas:
+// Fresh, colorful, youth-oriented avatar seeds
 const AVATAR_SEEDS = [
-  "Aiden", "Maya", "Liam", "Zoe", "Leo",
-  "Mason", "Sophia", "James", "Elena", "Xavier",
-  "Isabella", "William", "Mia", "Oliver", "Ava",
-  "Charles", "Margaret", "George", "Martha", "Arthur",
-  "Emma", "Ethan", "Charlotte", "Benjamin", "Amelia"
+  "Luna", "Phoenix", "Nova", "Kai", "Aria",
+  "Zara", "Finn", "Sage", "River", "Sky",
+  "Atlas", "Indie", "Juno", "Orion", "Willow",
+  "Blaze", "Echo", "Storm", "Raven", "Ocean",
+  "Ember", "Dash", "Lyra", "Ace", "Jade"
 ];
 
 const passwordValidation = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/);
@@ -105,7 +105,7 @@ export default function RegisterPage() {
       confirmPassword: '',
       country: '',
       currency: '',
-      photoURL: `https://api.dicebear.com/9.x/lorelei/svg?seed=Aiden`,
+      photoURL: `https://api.dicebear.com/9.x/avataaars/svg?seed=Luna&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
     },
   });
 
@@ -215,16 +215,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-accent py-12 px-4">
-      <div className="w-full max-w-md bg-card rounded-[2.5rem] shadow-2xl p-8 space-y-6 text-card-foreground border border-white/10 backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-accent py-6 sm:py-12 px-3 sm:px-4">
+      <div className="w-full max-w-md bg-card rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 text-card-foreground border border-white/10 backdrop-blur-sm">
 
-        <div className="flex flex-col items-center text-center space-y-3">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
-            <Icons.Logo className="w-10 h-10" />
+        <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
+            <Icons.Logo className="w-8 h-8 sm:w-10 sm:h-10" />
           </div>
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight text-primary">Create Account</h1>
-            <p className="text-muted-foreground text-sm font-medium">Register by email or choose a unique username</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">Create Account</h1>
+            <p className="text-muted-foreground text-xs sm:text-sm font-medium px-2">Register by email or choose a unique username</p>
           </div>
         </div>
 
@@ -255,7 +255,7 @@ export default function RegisterPage() {
               </DialogHeader>
               <div className="grid grid-cols-5 gap-3 p-2">
                 {AVATAR_SEEDS.map((seed) => {
-                  const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${seed}`;
+                  const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
                   const isSelected = form.watch('photoURL') === url;
                   return (
                     <button

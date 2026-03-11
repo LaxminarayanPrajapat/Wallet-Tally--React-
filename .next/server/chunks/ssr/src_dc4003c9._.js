@@ -137,31 +137,31 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$
 ;
 ;
 const AVATAR_SEEDS = [
-    "Aiden",
-    "Maya",
-    "Liam",
-    "Zoe",
-    "Leo",
-    "Mason",
-    "Sophia",
-    "James",
-    "Elena",
-    "Xavier",
-    "Isabella",
-    "William",
-    "Mia",
-    "Oliver",
-    "Ava",
-    "Charles",
-    "Margaret",
-    "George",
-    "Martha",
-    "Arthur",
-    "Emma",
-    "Ethan",
-    "Charlotte",
-    "Benjamin",
-    "Amelia"
+    "Luna",
+    "Phoenix",
+    "Nova",
+    "Kai",
+    "Aria",
+    "Zara",
+    "Finn",
+    "Sage",
+    "River",
+    "Sky",
+    "Atlas",
+    "Indie",
+    "Juno",
+    "Orion",
+    "Willow",
+    "Blaze",
+    "Echo",
+    "Storm",
+    "Raven",
+    "Ocean",
+    "Ember",
+    "Dash",
+    "Lyra",
+    "Ace",
+    "Jade"
 ];
 const profileSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["z"].object({
     username: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["z"].string(),
@@ -246,7 +246,7 @@ function SettingsPage() {
     };
     const onAvatarSelect = async (seed)=>{
         if (!user) return;
-        const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${seed}`;
+        const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
         try {
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$firebase$2f$node_modules$2f40$firebase$2f$auth$2f$dist$2f$node$2d$esm$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["updateProfile"])(user, {
                 photoURL: url
@@ -254,11 +254,15 @@ function SettingsPage() {
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["updateDoc"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$node$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["doc"])(firestore, 'users', user.uid), {
                 photoURL: url
             });
+            // Force reload the auth state to update the UI
+            await user.reload();
             toast({
                 title: "Avatar Updated",
                 description: "Your profile picture has been changed."
             });
             setIsAvatarDialogOpen(false);
+            // Force a page refresh to update all components
+            window.location.reload();
         } catch (error) {
             toast({
                 variant: "destructive",
@@ -274,21 +278,21 @@ function SettingsPage() {
                 className: "h-8 w-8 animate-spin text-primary"
             }, void 0, false, {
                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                lineNumber: 147,
+                lineNumber: 154,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/(app)/settings/page.tsx",
-            lineNumber: 146,
+            lineNumber: 153,
             columnNumber: 7
         }, this);
     }
     const creationDate = user?.metadata.creationTime ? new Date(user.metadata.creationTime) : new Date();
-    const defaultAvatar = `https://api.dicebear.com/9.x/lorelei/svg?seed=${AVATAR_SEEDS[0]}`;
+    const defaultAvatar = `https://api.dicebear.com/9.x/avataaars/svg?seed=${AVATAR_SEEDS[0]}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "max-w-6xl mx-auto w-full py-8 px-4",
+        className: "max-w-6xl mx-auto w-full py-4 sm:py-6 md:py-8 px-3 sm:px-4",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "grid grid-cols-1 lg:grid-cols-3 gap-8",
+            className: "grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "lg:col-span-1",
@@ -311,22 +315,22 @@ function SettingsPage() {
                                                 className: "object-cover"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                lineNumber: 166,
+                                                lineNumber: 173,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 165,
+                                            lineNumber: 172,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                        lineNumber: 164,
+                                        lineNumber: 171,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                    lineNumber: 163,
+                                    lineNumber: 170,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -337,7 +341,7 @@ function SettingsPage() {
                                             children: user?.displayName || 'User'
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 178,
+                                            lineNumber: 185,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -348,13 +352,13 @@ function SettingsPage() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 179,
+                                            lineNumber: 186,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                    lineNumber: 177,
+                                    lineNumber: 184,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -370,19 +374,19 @@ function SettingsPage() {
                                                         className: "w-5 h-5"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                        lineNumber: 187,
+                                                        lineNumber: 194,
                                                         columnNumber: 21
                                                     }, this),
                                                     "Change Picture"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                lineNumber: 186,
+                                                lineNumber: 193,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 185,
+                                            lineNumber: 192,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -395,7 +399,7 @@ function SettingsPage() {
                                                             children: "Choose Your Persona"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 193,
+                                                            lineNumber: 200,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -403,19 +407,19 @@ function SettingsPage() {
                                                             children: "Select an icon that best represents you."
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 194,
+                                                            lineNumber: 201,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                    lineNumber: 192,
+                                                    lineNumber: 199,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "grid grid-cols-5 gap-3 p-4",
                                                     children: AVATAR_SEEDS.map((seed)=>{
-                                                        const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${seed}`;
+                                                        const url = `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile,twinkle&eyes=happy,hearts&eyebrows=default,raisedExcited&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
                                                         const isSelected = user?.photoURL === url;
                                                         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                             type: "button",
@@ -430,7 +434,7 @@ function SettingsPage() {
                                                                     className: "object-cover"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 212,
+                                                                    lineNumber: 219,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 isSelected && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -439,52 +443,52 @@ function SettingsPage() {
                                                                         className: "w-8 h-8 text-primary"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                        lineNumber: 215,
+                                                                        lineNumber: 222,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 214,
+                                                                    lineNumber: 221,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, seed, true, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 203,
+                                                            lineNumber: 210,
                                                             columnNumber: 25
                                                         }, this);
                                                     })
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                    lineNumber: 198,
+                                                    lineNumber: 205,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 191,
+                                            lineNumber: 198,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                    lineNumber: 184,
+                                    lineNumber: 191,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                            lineNumber: 162,
+                            lineNumber: 169,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                        lineNumber: 161,
+                        lineNumber: 168,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                    lineNumber: 160,
+                    lineNumber: 167,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -502,12 +506,12 @@ function SettingsPage() {
                                             children: "Profile Settings"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 235,
+                                            lineNumber: 242,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                        lineNumber: 234,
+                                        lineNumber: 241,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Form"], {
@@ -527,7 +531,7 @@ function SettingsPage() {
                                                                         children: "Username"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                        lineNumber: 246,
+                                                                        lineNumber: 253,
                                                                         columnNumber: 27
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -538,23 +542,23 @@ function SettingsPage() {
                                                                             disabled: true
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 248,
+                                                                            lineNumber: 255,
                                                                             columnNumber: 29
                                                                         }, void 0)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                        lineNumber: 247,
+                                                                        lineNumber: 254,
                                                                         columnNumber: 27
                                                                     }, void 0)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                lineNumber: 245,
+                                                                lineNumber: 252,
                                                                 columnNumber: 25
                                                             }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                        lineNumber: 241,
+                                                        lineNumber: 248,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormField"], {
@@ -567,7 +571,7 @@ function SettingsPage() {
                                                                         children: "Email"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                        lineNumber: 263,
+                                                                        lineNumber: 270,
                                                                         columnNumber: 27
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormControl"], {
@@ -578,50 +582,50 @@ function SettingsPage() {
                                                                             disabled: true
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 265,
+                                                                            lineNumber: 272,
                                                                             columnNumber: 29
                                                                         }, void 0)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                        lineNumber: 264,
+                                                                        lineNumber: 271,
                                                                         columnNumber: 27
                                                                     }, void 0)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                lineNumber: 262,
+                                                                lineNumber: 269,
                                                                 columnNumber: 25
                                                             }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                        lineNumber: 258,
+                                                        lineNumber: 265,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                lineNumber: 240,
+                                                lineNumber: 247,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 239,
+                                            lineNumber: 246,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                        lineNumber: 238,
+                                        lineNumber: 245,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                lineNumber: 233,
+                                lineNumber: 240,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                            lineNumber: 232,
+                            lineNumber: 239,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -634,7 +638,7 @@ function SettingsPage() {
                                         children: "Change Password"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                        lineNumber: 284,
+                                        lineNumber: 291,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Form"], {
@@ -653,7 +657,7 @@ function SettingsPage() {
                                                                     children: "Current Password"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 293,
+                                                                    lineNumber: 300,
                                                                     columnNumber: 25
                                                                 }, void 0),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -667,12 +671,12 @@ function SettingsPage() {
                                                                                 disabled: isUpdatingPassword
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                lineNumber: 296,
+                                                                                lineNumber: 303,
                                                                                 columnNumber: 29
                                                                             }, void 0)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 295,
+                                                                            lineNumber: 302,
                                                                             columnNumber: 27
                                                                         }, void 0),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -683,40 +687,40 @@ function SettingsPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                lineNumber: 308,
+                                                                                lineNumber: 315,
                                                                                 columnNumber: 52
                                                                             }, void 0) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                lineNumber: 308,
+                                                                                lineNumber: 315,
                                                                                 columnNumber: 85
                                                                             }, void 0)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 303,
+                                                                            lineNumber: 310,
                                                                             columnNumber: 27
                                                                         }, void 0)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 294,
+                                                                    lineNumber: 301,
                                                                     columnNumber: 25
                                                                 }, void 0),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 311,
+                                                                    lineNumber: 318,
                                                                     columnNumber: 25
                                                                 }, void 0)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 292,
+                                                            lineNumber: 299,
                                                             columnNumber: 23
                                                         }, void 0)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                    lineNumber: 288,
+                                                    lineNumber: 295,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -732,7 +736,7 @@ function SettingsPage() {
                                                                             children: "New Password"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 322,
+                                                                            lineNumber: 329,
                                                                             columnNumber: 27
                                                                         }, void 0),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -746,12 +750,12 @@ function SettingsPage() {
                                                                                         disabled: isUpdatingPassword
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                        lineNumber: 325,
+                                                                                        lineNumber: 332,
                                                                                         columnNumber: 31
                                                                                     }, void 0)
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                    lineNumber: 324,
+                                                                                    lineNumber: 331,
                                                                                     columnNumber: 29
                                                                                 }, void 0),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -762,40 +766,40 @@ function SettingsPage() {
                                                                                         className: "w-5 h-5"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                        lineNumber: 337,
+                                                                                        lineNumber: 344,
                                                                                         columnNumber: 50
                                                                                     }, void 0) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                                                                         className: "w-5 h-5"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                        lineNumber: 337,
+                                                                                        lineNumber: 344,
                                                                                         columnNumber: 83
                                                                                     }, void 0)
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                    lineNumber: 332,
+                                                                                    lineNumber: 339,
                                                                                     columnNumber: 29
                                                                                 }, void 0)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 323,
+                                                                            lineNumber: 330,
                                                                             columnNumber: 27
                                                                         }, void 0),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 340,
+                                                                            lineNumber: 347,
                                                                             columnNumber: 27
                                                                         }, void 0)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 321,
+                                                                    lineNumber: 328,
                                                                     columnNumber: 25
                                                                 }, void 0)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 317,
+                                                            lineNumber: 324,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormField"], {
@@ -808,7 +812,7 @@ function SettingsPage() {
                                                                             children: "Confirm New Password"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 349,
+                                                                            lineNumber: 356,
                                                                             columnNumber: 27
                                                                         }, void 0),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -822,12 +826,12 @@ function SettingsPage() {
                                                                                         disabled: isUpdatingPassword
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                        lineNumber: 352,
+                                                                                        lineNumber: 359,
                                                                                         columnNumber: 31
                                                                                     }, void 0)
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                    lineNumber: 351,
+                                                                                    lineNumber: 358,
                                                                                     columnNumber: 29
                                                                                 }, void 0),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -838,46 +842,46 @@ function SettingsPage() {
                                                                                         className: "w-5 h-5"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                        lineNumber: 364,
+                                                                                        lineNumber: 371,
                                                                                         columnNumber: 54
                                                                                     }, void 0) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                                                                         className: "w-5 h-5"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                        lineNumber: 364,
+                                                                                        lineNumber: 371,
                                                                                         columnNumber: 87
                                                                                     }, void 0)
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                                    lineNumber: 359,
+                                                                                    lineNumber: 366,
                                                                                     columnNumber: 29
                                                                                 }, void 0)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 350,
+                                                                            lineNumber: 357,
                                                                             columnNumber: 27
                                                                         }, void 0),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$form$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FormMessage"], {}, void 0, false, {
                                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                            lineNumber: 367,
+                                                                            lineNumber: 374,
                                                                             columnNumber: 27
                                                                         }, void 0)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                                    lineNumber: 348,
+                                                                    lineNumber: 355,
                                                                     columnNumber: 25
                                                                 }, void 0)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 344,
+                                                            lineNumber: 351,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                    lineNumber: 316,
+                                                    lineNumber: 323,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -889,59 +893,59 @@ function SettingsPage() {
                                                             className: "w-5 h-5 animate-spin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 378,
+                                                            lineNumber: 385,
                                                             columnNumber: 43
                                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$key$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Key$3e$__["Key"], {
                                                             className: "w-5 h-5"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                            lineNumber: 378,
+                                                            lineNumber: 385,
                                                             columnNumber: 90
                                                         }, this),
                                                         "Change Password"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                                    lineNumber: 373,
+                                                    lineNumber: 380,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                            lineNumber: 287,
+                                            lineNumber: 294,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                        lineNumber: 286,
+                                        lineNumber: 293,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(app)/settings/page.tsx",
-                                lineNumber: 283,
+                                lineNumber: 290,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(app)/settings/page.tsx",
-                            lineNumber: 282,
+                            lineNumber: 289,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(app)/settings/page.tsx",
-                    lineNumber: 229,
+                    lineNumber: 236,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/(app)/settings/page.tsx",
-            lineNumber: 157,
+            lineNumber: 164,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/(app)/settings/page.tsx",
-        lineNumber: 156,
+        lineNumber: 163,
         columnNumber: 5
     }, this);
 }

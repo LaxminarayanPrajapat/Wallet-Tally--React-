@@ -158,10 +158,10 @@ function Hero() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "relative z-10 flex flex-col items-center text-center px-6 max-w-5xl space-y-8 bg-background/10 backdrop-blur-[1px] py-20 rounded-3xl",
+                className: "relative z-10 flex flex-col items-center text-center px-4 sm:px-6 max-w-5xl space-y-6 sm:space-y-8 bg-background/10 backdrop-blur-[1px] py-12 sm:py-16 md:py-20 rounded-2xl sm:rounded-3xl mx-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                        className: "text-5xl font-bold sm:text-6xl md:text-7xl lg:text-8xl bg-gradient-to-tr from-primary to-accent bg-clip-text text-transparent leading-tight tracking-tight",
+                        className: "text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl bg-gradient-to-tr from-primary to-accent bg-clip-text text-transparent leading-tight tracking-tight",
                         children: "Track Your Cash Flow"
                     }, void 0, false, {
                         fileName: "[project]/src/components/landing/hero.tsx",
@@ -169,7 +169,7 @@ function Hero() {
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "max-w-2xl text-lg sm:text-xl text-primary font-medium leading-relaxed",
+                        className: "max-w-2xl text-base sm:text-lg md:text-xl text-primary font-medium leading-relaxed px-2",
                         children: "The simplest way to manage your cash balance. Record daily income, track expenses, and get insight to grow your savings."
                     }, void 0, false, {
                         fileName: "[project]/src/components/landing/hero.tsx",
@@ -177,12 +177,12 @@ function Hero() {
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex flex-wrap justify-center gap-6 pt-4",
+                        className: "flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 pt-4 w-full sm:w-auto px-4 sm:px-0",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                 size: "lg",
                                 asChild: true,
-                                className: "text-lg px-10 py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]",
+                                className: "text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                     href: "/register",
                                     children: "Start Saving Now"
@@ -199,7 +199,7 @@ function Hero() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                 size: "lg",
                                 asChild: true,
-                                className: "text-lg px-10 py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]",
+                                className: "text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                     href: "/login",
                                     children: "Login to Account"

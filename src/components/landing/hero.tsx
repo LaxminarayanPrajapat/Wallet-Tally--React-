@@ -50,27 +50,27 @@ export function Hero() {
       </div>
 
       {/* Foreground Content Overlaid on Marquee */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl space-y-8 bg-background/10 backdrop-blur-[1px] py-20 rounded-3xl">
-        <h1 className="text-5xl font-bold sm:text-6xl md:text-7xl lg:text-8xl bg-gradient-to-tr from-primary to-accent bg-clip-text text-transparent leading-tight tracking-tight">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 max-w-5xl space-y-6 sm:space-y-8 bg-background/10 backdrop-blur-[1px] py-12 sm:py-16 md:py-20 rounded-2xl sm:rounded-3xl mx-4">
+        <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl bg-gradient-to-tr from-primary to-accent bg-clip-text text-transparent leading-tight tracking-tight">
           Track Your Cash Flow
         </h1>
-        <p className="max-w-2xl text-lg sm:text-xl text-primary font-medium leading-relaxed">
+        <p className="max-w-2xl text-base sm:text-lg md:text-xl text-primary font-medium leading-relaxed px-2">
           The simplest way to manage your cash balance. Record daily income,
           track expenses, and get insight to grow your savings.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-6 pt-4">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 pt-4 w-full sm:w-auto px-4 sm:px-0">
           <Button
             size="lg"
             asChild
-            className="text-lg px-10 py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
+            className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
           >
             <Link href="/register">Start Saving Now</Link>
           </Button>
           <Button
             size="lg"
             asChild
-            className="text-lg px-10 py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98]"
+            className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 text-white bg-gradient-to-tr from-primary to-accent shadow-xl transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
           >
             <Link href="/login">Login to Account</Link>
           </Button>
