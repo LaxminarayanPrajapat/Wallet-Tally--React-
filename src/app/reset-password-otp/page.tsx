@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Icons } from '@/components/icons';
@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { sendPasswordResetOtpEmail } from '@/app/actions/email';
 
-export default function ResetPasswordOtpPage() {
+function ResetPasswordOtpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -148,9 +148,9 @@ export default function ResetPasswordOtpPage() {
               {isResendDisabled ? `Resend in ${timer}s` : 'Resend Code'}
             </button>
           </div>
-          
-          <Link 
-            href="/forgot-password" 
+
+          <Link
+            href="/forgot-password"
             className="text-sm font-bold text-muted-foreground hover:text-primary hover:underline flex items-center justify-center gap-2 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -159,5 +159,17 @@ export default function ResetPasswordOtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordOtpPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <ResetPasswordOtpContent />
+    </Suspense>
   );
 }

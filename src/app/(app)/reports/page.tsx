@@ -1,5 +1,6 @@
 import { IncomeVsExpenseChart } from '@/components/reports/income-vs-expense-chart';
 import { SpendingByCategoryChart } from '@/components/reports/spending-by-category-chart';
+import { transactions } from '@/lib/data';
 
 export default function ReportsPage() {
   return (
@@ -11,7 +12,7 @@ export default function ReportsPage() {
         </p>
       </div>
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
-        <SpendingByCategoryChart />
+        <SpendingByCategoryChart transactions={transactions} />
         <IncomeVsExpenseChart />
       </div>
     </div>

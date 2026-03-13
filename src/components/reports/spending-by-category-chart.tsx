@@ -17,11 +17,16 @@ export function SpendingByCategoryChart({ transactions }: SpendingByCategoryChar
   const chartData = useMemo(() => {
     const categoryMap: Record<string, { name: string; value: number; type: string }> = {};
 
+    // Safety check: ensure transactions is an array
+    if (!transactions || !Array.isArray(transactions)) {
+      return [];
+    }
+
     transactions.forEach((t) => {
       const category = t.category || 'Uncategorized';
       const type = t.type || 'expense';
       const key = `${category}-${type}`;
-      
+
       if (!categoryMap[key]) {
         categoryMap[key] = { name: category, value: 0, type: type };
       }
@@ -40,16 +45,16 @@ export function SpendingByCategoryChart({ transactions }: SpendingByCategoryChar
       const data = payload[0].payload;
       const percentage = totalValue > 0 ? ((data.value / totalValue) * 100).toFixed(1) : '0';
       const symbol = currencySymbol || '₹';
-      
+
       return (
         <div className="bg-[#1a1a1a] text-white p-3 rounded-xl border border-white/10 shadow-2xl text-[11px] font-semibold">
           <div className="mb-1 opacity-70">
             {data.name} ({data.type === 'income' ? 'Income' : 'Expense'})
           </div>
           <div className="flex items-center gap-2">
-            <div 
-              className="w-2 h-2 rounded-full" 
-              style={{ backgroundColor: payload[0].color }} 
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: payload[0].color }}
             />
             <span className="text-xs">
               {symbol}{data.value.toLocaleString('en-IN', { minimumFractionDigits: 2 })} ({percentage}%)
@@ -65,7 +70,7 @@ export function SpendingByCategoryChart({ transactions }: SpendingByCategoryChar
     // Group categories by type to calculate relative index for shading
     const sameTypeItems = chartData.filter(d => d.type === entry.type);
     const typeIndex = sameTypeItems.indexOf(entry);
-    
+
     if (entry.type === 'income') {
       // Shades of green: Base HSL(142, 70%, 45%)
       // We vary the lightness to create shades
@@ -87,8 +92,8 @@ export function SpendingByCategoryChart({ transactions }: SpendingByCategoryChar
         >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Tooltip 
-                content={<CustomTooltip />} 
+              <Tooltip
+                content={<CustomTooltip />}
                 cursor={false}
                 wrapperStyle={{ outline: 'none' }}
               />
@@ -105,9 +110,9 @@ export function SpendingByCategoryChart({ transactions }: SpendingByCategoryChar
                 endAngle={450}
               >
                 {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={getShadedColor(entry, index)} 
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={getShadedColor(entry, index)}
                     className="hover:opacity-90 transition-all cursor-pointer outline-none"
                   />
                 ))}
@@ -118,11 +123,11 @@ export function SpendingByCategoryChart({ transactions }: SpendingByCategoryChar
       ) : (
         <div className="flex flex-col items-center justify-center p-10">
           <div className="w-48 h-48 rounded-full bg-slate-50 border-[10px] border-white shadow-inner flex items-center justify-center relative">
-             <div className="absolute inset-4 rounded-full border-2 border-dashed border-slate-200" />
-             <div className="flex flex-col items-center gap-1 relative z-10">
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No Activity</span>
-               <div className="h-0.5 w-6 bg-slate-200 rounded-full" />
-             </div>
+            <div className="absolute inset-4 rounded-full border-2 border-dashed border-slate-200" />
+            <div className="flex flex-col items-center gap-1 relative z-10">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No Activity</span>
+              <div className="h-0.5 w-6 bg-slate-200 rounded-full" />
+            </div>
           </div>
         </div>
       )}
