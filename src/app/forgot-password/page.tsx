@@ -7,8 +7,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { fetchSignInMethodsForEmail } from 'firebase/auth';
-import { User, Mail, ArrowLeft, Send, Loader2 } from 'lucide-react';
+import { User, ArrowLeft, Send, Loader2 } from 'lucide-react';
 
 import { useFirestore, useAuth } from '@/firebase';
 import { Icons } from '@/components/icons';
@@ -56,27 +55,31 @@ export default function ForgotPasswordPage() {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        // Firestore record missing - check if Auth account exists (deleted user scenario)
+        // Firestore record missing - only recoverable if they entered an email directly.
+        // fetchSignInMethodsForEmail is deprecated in Firebase v9+ and returns [] even
+        // when the account exists, so we use sendPasswordResetEmail as the probe instead.
         if (values.identifier.includes('@')) {
-          const signInMethods = await fetchSignInMethodsForEmail(auth, values.identifier);
-          if (signInMethods.length > 0) {
-            // Auth account exists but Firestore was deleted - use the email directly
-            email = values.identifier;
-            userName = values.identifier.split('@')[0];
-          } else {
+          const { sendPasswordResetEmail } = await import('firebase/auth');
+          try {
+            await sendPasswordResetEmail(auth, values.identifier);
+            toast({
+              title: 'Password Reset Email Sent',
+              description: `A reset link has been sent to ${values.identifier}. Check your inbox to set a new password.`,
+            });
+          } catch {
             toast({
               variant: 'destructive',
               title: 'Account Not Found',
-              description: 'We could not find an account associated with that identifier.',
+              description: 'No account exists with this email address.',
             });
-            setIsLoading(false);
-            return;
           }
+          setIsLoading(false);
+          return;
         } else {
           toast({
             variant: 'destructive',
             title: 'Account Not Found',
-            description: 'We could not find an account associated with that identifier.',
+            description: 'We could not find an account associated with that username.',
           });
           setIsLoading(false);
           return;

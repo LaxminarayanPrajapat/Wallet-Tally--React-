@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
-import { collection, doc, deleteDoc, updateDoc, increment, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, doc, updateDoc, increment } from 'firebase/firestore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +45,7 @@ import { useToast } from '@/hooks/use-toast';
 import { countries } from '@/lib/countries';
 import { format } from 'date-fns';
 import { sendUserWarningEmail, sendAccountDeletionEmail } from '@/app/actions/email';
+import { deleteUserCompletely } from '@/app/actions/admin';
 import { cn } from '@/lib/utils';
 
 /**
@@ -149,42 +150,32 @@ export default function AdminUsersPage() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!firestore || !userToDelete || !deleteReason.trim()) return;
+    if (!userToDelete || !deleteReason.trim()) return;
 
     setIsDeleteProcessing(true);
     try {
-      // 1. Dispatch official termination email via Server Action
+      // 1. Send termination email
       await sendAccountDeletionEmail(userToDelete.email, userToDelete.name || 'User', deleteReason);
 
-      const userId = userToDelete.id;
-      const batch = writeBatch(firestore);
+      // 2. Delete from Firestore AND Firebase Auth via server action
+      const result = await deleteUserCompletely(
+        userToDelete.id,
+        userToDelete.email,
+        userToDelete.name || 'User',
+        deleteReason
+      );
 
-      // 2. Cascading cleanup: Purge all user-related subcollections
-      const subcollectionsToPurge = ['transactions', 'categories', 'budgets', 'feedback'];
-
-      for (const colName of subcollectionsToPurge) {
-        const colRef = collection(firestore, 'users', userId, colName);
-        const snapshot = await getDocs(colRef);
-        snapshot.forEach((subDoc) => {
-          batch.delete(subDoc.ref);
-        });
-      }
-
-      // 3. Remove the root user profile document
-      batch.delete(doc(firestore, 'users', userId));
-
-      // 4. Execute all deletions in a single batch atomic operation
-      await batch.commit();
+      if (!result.success) throw new Error(result.error);
 
       toast({
-        title: "Account Terminated",
-        description: `Profile and all associated financial records for ${userToDelete.email} have been permanently purged.`,
+        title: 'Account Terminated',
+        description: `All data for ${userToDelete.email} has been permanently deleted. The email can be re-registered.`,
       });
 
       setIsDeleteReasonOpen(false);
       setUserToDelete(null);
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Termination Failed", description: error.message });
+      toast({ variant: 'destructive', title: 'Termination Failed', description: error.message });
     } finally {
       setIsDeleteProcessing(false);
     }
