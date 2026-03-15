@@ -7,7 +7,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Eye, EyeOff, Save, Loader2, ShieldCheck } from 'lucide-react';
 
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
+import { signInWithEmailAndPassword, updatePassword } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +35,7 @@ export default function ResetPasswordPage() {
   const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
+  const firestore = useFirestore();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -58,21 +61,36 @@ export default function ResetPasswordPage() {
     try {
       const resetDataString = sessionStorage.getItem('resetPasswordData');
       if (!resetDataString) throw new Error('Session context lost.');
-      
-      // In a real-world scenario with Firebase Client SDK, actually resetting 
-      // a password without an action code or re-authentication usually requires 
-      // an admin function or verifyPasswordResetCode. 
-      // For this prototype, we complete the flow to guide the user to the final success state.
-      
+
+      const { email, userName, userId } = JSON.parse(resetDataString);
+
+      // Send Firebase official password reset email so user can set the new password
+      const { sendPasswordResetEmail } = await import('firebase/auth');
+      await sendPasswordResetEmail(auth, email);
+
+      // Ensure Firestore record exists (handles deleted user scenario)
+      if (userId) {
+        const userDocRef = doc(firestore, 'users', userId);
+        const userDocSnap = await getDoc(userDocRef);
+        if (!userDocSnap.exists()) {
+          await setDoc(userDocRef, {
+            id: userId,
+            email: email,
+            name: userName,
+            photoURL: '',
+            country: 'Unknown',
+          });
+        }
+      }
+
       toast({
-        title: 'Password Updated!',
-        description: 'Your security credentials have been successfully reset. Please login with your new password.',
+        title: 'Password Reset Email Sent!',
+        description: `A reset link has been sent to ${email}. Check your inbox to set your new password.`,
       });
 
-      // Cleanup
       sessionStorage.removeItem('resetPasswordData');
       sessionStorage.removeItem('resetOtp');
-      
+
       router.push('/login');
     } catch (error: any) {
       toast({
@@ -110,12 +128,12 @@ export default function ResetPasswordPage() {
                   <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">New Password</FormLabel>
                   <div className="relative">
                     <FormControl>
-                      <Input 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="••••••••" 
-                        className="pl-11 pr-11 rounded-2xl h-14 border-muted bg-muted/10 focus:bg-background" 
-                        {...field} 
-                        disabled={isLoading} 
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="pl-11 pr-11 rounded-2xl h-14 border-muted bg-muted/10 focus:bg-background"
+                        {...field}
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -140,12 +158,12 @@ export default function ResetPasswordPage() {
                   <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Confirm Password</FormLabel>
                   <div className="relative">
                     <FormControl>
-                      <Input 
-                        type={showConfirmPassword ? "text" : "password"} 
-                        placeholder="••••••••" 
-                        className="pl-11 pr-11 rounded-2xl h-14 border-muted bg-muted/10 focus:bg-background" 
-                        {...field} 
-                        disabled={isLoading} 
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="pl-11 pr-11 rounded-2xl h-14 border-muted bg-muted/10 focus:bg-background"
+                        {...field}
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

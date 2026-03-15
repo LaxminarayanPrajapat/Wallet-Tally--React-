@@ -7,9 +7,10 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import { User, Mail, ArrowLeft, Send, Loader2 } from 'lucide-react';
 
-import { useFirestore } from '@/firebase';
+import { useFirestore, useAuth } from '@/firebase';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +26,7 @@ export default function ForgotPasswordPage() {
   const { toast } = useToast();
   const router = useRouter();
   const firestore = useFirestore();
+  const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,7 +46,7 @@ export default function ForgotPasswordPage() {
       // 1. Resolve identifier to email and find user
       const usersRef = collection(firestore, 'users');
       let q;
-      
+
       if (values.identifier.includes('@')) {
         q = query(usersRef, where('email', '==', values.identifier));
       } else {
@@ -52,22 +54,40 @@ export default function ForgotPasswordPage() {
       }
 
       const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) {
-        toast({
-          variant: 'destructive',
-          title: 'Account Not Found',
-          description: 'We could not find an account associated with that identifier.',
-        });
-        setIsLoading(false);
-        return;
-      }
 
-      const userDoc = querySnapshot.docs[0];
-      const userData = userDoc.data();
-      email = userData.email;
-      userName = userData.name || 'User';
-      userId = userDoc.id;
+      if (querySnapshot.empty) {
+        // Firestore record missing - check if Auth account exists (deleted user scenario)
+        if (values.identifier.includes('@')) {
+          const signInMethods = await fetchSignInMethodsForEmail(auth, values.identifier);
+          if (signInMethods.length > 0) {
+            // Auth account exists but Firestore was deleted - use the email directly
+            email = values.identifier;
+            userName = values.identifier.split('@')[0];
+          } else {
+            toast({
+              variant: 'destructive',
+              title: 'Account Not Found',
+              description: 'We could not find an account associated with that identifier.',
+            });
+            setIsLoading(false);
+            return;
+          }
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Account Not Found',
+            description: 'We could not find an account associated with that identifier.',
+          });
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        email = userData.email;
+        userName = userData.name || 'User';
+        userId = userDoc.id;
+      }
 
       if (email.includes('@wallet-tally.internal')) {
         toast({
@@ -134,10 +154,10 @@ export default function ForgotPasswordPage() {
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input 
-                        placeholder="Username or Email" 
-                        className="pl-12 rounded-2xl h-14 border-muted bg-muted/20 focus:bg-background transition-all" 
-                        {...field} 
+                      <Input
+                        placeholder="Username or Email"
+                        className="pl-12 rounded-2xl h-14 border-muted bg-muted/20 focus:bg-background transition-all"
+                        {...field}
                         disabled={isLoading}
                       />
                     </div>
@@ -156,7 +176,7 @@ export default function ForgotPasswordPage() {
                 <Loader2 className="w-6 h-6 animate-spin" />
               ) : (
                 <>
-                  <Send className="w-5 h-5" /> 
+                  <Send className="w-5 h-5" />
                   <span>Send Reset Code</span>
                 </>
               )}
@@ -165,8 +185,8 @@ export default function ForgotPasswordPage() {
         </Form>
 
         <div className="text-center">
-          <Link 
-            href="/login" 
+          <Link
+            href="/login"
             className="text-sm font-bold text-primary hover:underline flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />

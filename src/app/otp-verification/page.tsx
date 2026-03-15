@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useAuth, useFirestore } from '@/firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { sendOtpEmail } from '@/app/actions/email';
 import { Loader2 } from 'lucide-react';
@@ -58,12 +58,30 @@ function OtpVerificationContent() {
       const registrationData = JSON.parse(registrationDataString);
       setIsVerifying(true);
       try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          registrationData.email,
-          registrationData.password,
-        );
-        const user = userCredential.user;
+        let user;
+
+        try {
+          // Try creating a new account first
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            registrationData.email,
+            registrationData.password,
+          );
+          user = userCredential.user;
+        } catch (createError: any) {
+          if (createError.code === 'auth/email-already-in-use') {
+            // Auth account exists but Firestore record was deleted.
+            // Sign in with the provided credentials to reclaim the account.
+            const userCredential = await signInWithEmailAndPassword(
+              auth,
+              registrationData.email,
+              registrationData.password,
+            );
+            user = userCredential.user;
+          } else {
+            throw createError;
+          }
+        }
 
         // Update Firebase Auth Profile
         await updateProfile(user, {
@@ -71,7 +89,7 @@ function OtpVerificationContent() {
           photoURL: registrationData.photoURL
         });
 
-        // Store User in Firestore with Country
+        // Re-create Firestore record (handles both new and reclaimed accounts)
         await setDoc(doc(firestore, 'users', user.uid), {
           id: user.uid,
           email: user.email,
@@ -91,10 +109,14 @@ function OtpVerificationContent() {
         sessionStorage.removeItem('registrationData');
         router.push('/dashboard');
       } catch (error: any) {
+        // Friendly message if password doesn't match the existing Auth account
+        const message = error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password'
+          ? 'This email is linked to an existing account with a different password. Please use forgot password to recover it.'
+          : error.message || 'An unexpected error occurred.';
         toast({
           variant: 'destructive',
           title: 'Registration Failed',
-          description: error.message || 'An unexpected error occurred.',
+          description: message,
         });
       } finally {
         setIsVerifying(false);
