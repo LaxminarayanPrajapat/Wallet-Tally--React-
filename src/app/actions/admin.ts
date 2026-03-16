@@ -2,7 +2,7 @@
 
 import * as admin from 'firebase-admin';
 import { initializeFirebase } from '@/firebase';
-import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDocs, writeBatch, updateDoc } from 'firebase/firestore';
 
 /**
  * Initializes Firebase Admin SDK using Application Default Credentials.
@@ -61,5 +61,45 @@ export async function deleteUserCompletely(
     } catch (error: any) {
         console.error('[Admin] deleteUserCompletely failed:', error);
         return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Backfills joinedAt for all users who are missing it.
+ * Reads creationTime from Firebase Auth and writes it to Firestore.
+ */
+export async function backfillJoinedAt(): Promise<{ success: boolean; updated: number; error?: string }> {
+    try {
+        const adminApp = getAdminApp();
+        const { firestore } = initializeFirebase();
+
+        // Get all Firestore users
+        const usersSnapshot = await getDocs(collection(firestore, 'users'));
+        let updated = 0;
+
+        for (const userDoc of usersSnapshot.docs) {
+            const data = userDoc.data();
+            // Skip users that already have joinedAt
+            if (data.joinedAt) continue;
+
+            try {
+                // Get creation time from Firebase Auth
+                const authUser = await admin.auth(adminApp).getUser(userDoc.id);
+                const creationTime = authUser.metadata.creationTime;
+                if (creationTime) {
+                    await updateDoc(doc(firestore, 'users', userDoc.id), {
+                        joinedAt: new Date(creationTime).toISOString(),
+                    });
+                    updated++;
+                }
+            } catch {
+                // User may not exist in Auth - skip silently
+            }
+        }
+
+        return { success: true, updated };
+    } catch (error: any) {
+        console.error('[Admin] backfillJoinedAt failed:', error);
+        return { success: false, updated: 0, error: error.message };
     }
 }
