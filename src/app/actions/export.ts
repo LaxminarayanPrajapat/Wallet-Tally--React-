@@ -11,13 +11,22 @@ import { format } from 'date-fns';
  */
 function safe(text: string): string {
   return text
-    .replace(/₹/g, 'Rs.')
-    .replace(/€/g, 'EUR')
-    .replace(/£/g, 'GBP')
-    .replace(/¥/g, 'JPY')
-    .replace(/₩/g, 'KRW')
-    .replace(/₦/g, 'NGN')
-    .replace(/[^\x00-\xFF]/g, '?'); // fallback for any other non-Latin-1 char
+    .replace(/₹/g, 'Rs.')   // Indian Rupee
+    .replace(/€/g, 'EUR')   // Euro
+    .replace(/£/g, 'GBP')   // British Pound
+    .replace(/¥/g, 'JPY')   // Japanese/Chinese Yen
+    .replace(/₩/g, 'KRW')   // South Korean Won
+    .replace(/₺/g, 'TRY')   // Turkish Lira
+    .replace(/₽/g, 'RUB')   // Russian Ruble
+    .replace(/฿/g, 'THB')   // Thai Baht
+    .replace(/₫/g, 'VND')   // Vietnamese Dong
+    .replace(/₱/g, 'PHP')   // Philippine Peso
+    .replace(/₪/g, 'ILS')   // Israeli Shekel
+    .replace(/₨/g, 'PKR')   // Pakistani Rupee
+    .replace(/৳/g, 'BDT')   // Bangladeshi Taka
+    .replace(/₦/g, 'NGN')   // Nigerian Naira
+    .replace(/د\.إ/g, 'AED') // UAE Dirham (Arabic)
+    .replace(/[^\x00-\xFF]/g, '?'); // fallback for any remaining non-Latin-1
 }
 
 /**
