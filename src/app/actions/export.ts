@@ -22,66 +22,52 @@ function safe(text: string): string {
 
 /**
  * Draws the Wallet Tally logo using PDFKit vector primitives.
- * Faithfully reproduces the SVG icon (viewBox 0 0 512 512):
- *   - Rounded-rect wallet body (x32 y96 w448 h320 rx48)
- *   - Dashed top-slot line at y=180
- *   - Right-side flap pocket (x280 y186 w232 h108 rx36)
- *   - White clasp circle (cx430 cy240 r34)
- *   - Inner gradient clasp dot (cx430 cy240 r14)
+ * All coordinates are inlined (no closures) to avoid server action compilation issues.
  */
-function drawWalletIcon(doc: PDFKit.PDFDocument, ox: number, oy: number, size: number) {
-  const s = size / 512; // scale factor: SVG coords → PDF coords
+function drawWalletIcon(doc: PDFKit.PDFDocument, originX: number, originY: number, size: number) {
+  const s = size / 512;
 
-  const tx = (svgX: number) => ox + svgX * s;
-  const ty = (svgY: number) => oy + svgY * s;
-
-  // ── Main wallet body ──────────────────────────────────────────────────────
+  // Main wallet body
   doc
-    .roundedRect(tx(32), ty(96), 448 * s, 320 * s, 48 * s)
+    .roundedRect(originX + 32 * s, originY + 96 * s, 448 * s, 320 * s, 48 * s)
     .fillAndStroke('#1e3a8a', '#1e3a8a');
-
-  // White border around body
   doc
-    .roundedRect(tx(32), ty(96), 448 * s, 320 * s, 48 * s)
+    .roundedRect(originX + 32 * s, originY + 96 * s, 448 * s, 320 * s, 48 * s)
     .lineWidth(12 * s)
     .strokeColor('white')
     .stroke();
 
-  // ── Dashed top-slot line at SVG y=180 ────────────────────────────────────
+  // Dashed top-slot line
   doc
-    .moveTo(tx(32), ty(180))
-    .lineTo(tx(480), ty(180))
+    .moveTo(originX + 32 * s, originY + 180 * s)
+    .lineTo(originX + 480 * s, originY + 180 * s)
     .lineWidth(4 * s)
-    .strokeColor('rgba(255,255,255,0.4)')
+    .strokeColor('#ffffff')
     .dash(12 * s, { space: 8 * s })
     .stroke()
     .undash();
 
-  // ── Right-side flap pocket ────────────────────────────────────────────────
+  // Right-side flap pocket
   doc
-    .roundedRect(tx(280), ty(186), 232 * s, 108 * s, 36 * s)
+    .roundedRect(originX + 280 * s, originY + 186 * s, 232 * s, 108 * s, 36 * s)
     .fillAndStroke('#1e3a8a', '#1e3a8a');
-
-  // White border around flap
   doc
-    .roundedRect(tx(280), ty(186), 232 * s, 108 * s, 36 * s)
+    .roundedRect(originX + 280 * s, originY + 186 * s, 232 * s, 108 * s, 36 * s)
     .lineWidth(12 * s)
     .strokeColor('white')
     .stroke();
 
-  // ── Clasp — white outer circle ────────────────────────────────────────────
+  // Clasp white outer circle
   doc
-    .circle(tx(430), ty(240), 34 * s)
+    .circle(originX + 430 * s, originY + 240 * s, 34 * s)
     .fillAndStroke('white', 'white');
 
-  // ── Clasp — inner dark dot ────────────────────────────────────────────────
+  // Clasp inner dark dot
   doc
-    .circle(tx(430), ty(240), 14 * s)
+    .circle(originX + 430 * s, originY + 240 * s, 14 * s)
     .fillAndStroke('#1e3a8a', '#1e3a8a');
-
-  // Thin white ring around inner dot
   doc
-    .circle(tx(430), ty(240), 14 * s)
+    .circle(originX + 430 * s, originY + 240 * s, 14 * s)
     .lineWidth(2 * s)
     .strokeColor('white')
     .stroke();
