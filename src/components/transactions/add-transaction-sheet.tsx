@@ -150,15 +150,15 @@ export function AddTransactionSheet({
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-[2.5rem] border-0 shadow-2xl bg-white">
-        <DialogHeader className="px-10 pt-10 flex flex-row items-center justify-between space-y-0">
-          <DialogTitle className="text-3xl font-bold bg-gradient-to-tr from-primary to-accent bg-clip-text text-transparent">
+      <DialogContent className="w-[calc(100vw-2rem)] sm:w-auto sm:max-w-[500px] p-0 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border-0 shadow-2xl bg-white">
+        <DialogHeader className="px-6 sm:px-10 pt-7 sm:pt-10 flex flex-row items-center justify-between space-y-0">
+          <DialogTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-tr from-primary to-accent bg-clip-text text-transparent">
             {title}
           </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="px-10 pb-10 space-y-6 pt-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 sm:px-10 pb-7 sm:pb-10 space-y-5 pt-5 sm:pt-6">
             {/* Balance Info */}
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100">
               <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">Current Balance</span>
@@ -282,7 +282,7 @@ export function AddTransactionSheet({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 bg-gradient-to-tr from-primary to-accent hover:opacity-95 text-white font-bold text-lg rounded-2xl transition-all shadow-xl mt-4 border-0 active:scale-[0.98]"
+              className="w-full h-12 sm:h-14 bg-gradient-to-tr from-primary to-accent hover:opacity-95 text-white font-bold text-base sm:text-lg rounded-2xl transition-all shadow-xl mt-4 border-0 active:scale-[0.98]"
             >
               {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Save Transaction'}
             </Button>
