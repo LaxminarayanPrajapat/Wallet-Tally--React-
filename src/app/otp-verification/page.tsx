@@ -95,7 +95,8 @@ function OtpVerificationContent() {
           email: user.email,
           name: registrationData.username,
           photoURL: registrationData.photoURL,
-          country: registrationData.country || 'Unknown'
+          country: registrationData.country || 'Unknown',
+          joinedAt: new Date().toISOString(),
         });
 
         localStorage.setItem('currencySymbol', registrationData.currency);

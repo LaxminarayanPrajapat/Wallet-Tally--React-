@@ -96,7 +96,13 @@ export default function AdminUsersPage() {
 
   const registeredUsers = useMemo(() => {
     if (!users) return [];
-    return users.filter(u => u.email && u.email.includes('@'));
+    return users
+      .filter(u => u.email && u.email.includes('@'))
+      .sort((a, b) => {
+        const dateA = a.joinedAt ? new Date(a.joinedAt).getTime() : 0;
+        const dateB = b.joinedAt ? new Date(b.joinedAt).getTime() : 0;
+        return dateA - dateB;
+      });
   }, [users]);
 
   const uniqueCountries = useMemo(() => {
