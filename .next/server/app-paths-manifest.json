@@ -1,5 +1,13 @@
 {
-  "/icon.svg/route": "app/icon.svg/route.js",
+  "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
+  "/(app)/settings/page": "app/(app)/settings/page.js",
+  "/(app)/transactions/page": "app/(app)/transactions/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/feedback/page": "app/admin/feedback/page.js",
+  "/admin/users/page": "app/admin/users/page.js",
+  "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/register/page": "app/register/page.js"
+  "/register/page": "app/register/page.js",
+  "/terms/page": "app/terms/page.js"
 }
