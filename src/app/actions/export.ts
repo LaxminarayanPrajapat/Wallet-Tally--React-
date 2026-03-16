@@ -221,7 +221,8 @@ export async function exportTransactionsToPdf(
 
       // Category badge
       const catText = safe(t.category || '-');
-      const catWidth = Math.min(doc.widthOfString(catText, { fontSize: 7 }) + 10, 85);
+      doc.fontSize(7);
+      const catWidth = Math.min(doc.widthOfString(catText) + 10, 85);
       doc.roundedRect(180, currentY - 2, catWidth, badgeHeight, 3).fillAndStroke('#dbeafe', '#dbeafe');
       doc.fontSize(7).font('Helvetica-Bold').fillColor('#2563eb').text(catText, 183, currentY + 1, { width: 82, ellipsis: true });
 
