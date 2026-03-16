@@ -21,39 +21,70 @@ function safe(text: string): string {
 }
 
 /**
- * Draws a simplified wallet icon using PDFKit vector primitives.
- * Matches the Wallet Tally brand icon shape.
+ * Draws the Wallet Tally logo using PDFKit vector primitives.
+ * Faithfully reproduces the SVG icon (viewBox 0 0 512 512):
+ *   - Rounded-rect wallet body (x32 y96 w448 h320 rx48)
+ *   - Dashed top-slot line at y=180
+ *   - Right-side flap pocket (x280 y186 w232 h108 rx36)
+ *   - White clasp circle (cx430 cy240 r34)
+ *   - Inner gradient clasp dot (cx430 cy240 r14)
  */
-function drawWalletIcon(doc: PDFKit.PDFDocument, x: number, y: number, size: number) {
-  const scale = size / 32;
+function drawWalletIcon(doc: PDFKit.PDFDocument, ox: number, oy: number, size: number) {
+  const s = size / 512; // scale factor: SVG coords → PDF coords
 
-  // Main wallet body
+  const tx = (svgX: number) => ox + svgX * s;
+  const ty = (svgY: number) => oy + svgY * s;
+
+  // ── Main wallet body ──────────────────────────────────────────────────────
   doc
-    .roundedRect(x, y + 3 * scale, 28 * scale, 20 * scale, 3 * scale)
+    .roundedRect(tx(32), ty(96), 448 * s, 320 * s, 48 * s)
     .fillAndStroke('#1e3a8a', '#1e3a8a');
 
-  // Top slot line
+  // White border around body
   doc
-    .moveTo(x, y + 7 * scale)
-    .lineTo(x + 28 * scale, y + 7 * scale)
+    .roundedRect(tx(32), ty(96), 448 * s, 320 * s, 48 * s)
+    .lineWidth(12 * s)
     .strokeColor('white')
-    .lineWidth(0.5 * scale)
     .stroke();
 
-  // Flap / pocket on right side
+  // ── Dashed top-slot line at SVG y=180 ────────────────────────────────────
   doc
-    .roundedRect(x + 14 * scale, y + 8 * scale, 14 * scale, 8 * scale, 2 * scale)
+    .moveTo(tx(32), ty(180))
+    .lineTo(tx(480), ty(180))
+    .lineWidth(4 * s)
+    .strokeColor('rgba(255,255,255,0.4)')
+    .dash(12 * s, { space: 8 * s })
+    .stroke()
+    .undash();
+
+  // ── Right-side flap pocket ────────────────────────────────────────────────
+  doc
+    .roundedRect(tx(280), ty(186), 232 * s, 108 * s, 36 * s)
     .fillAndStroke('#1e3a8a', '#1e3a8a');
 
-  // Clasp circle (white outer)
+  // White border around flap
   doc
-    .circle(x + 24 * scale, y + 12 * scale, 2.5 * scale)
+    .roundedRect(tx(280), ty(186), 232 * s, 108 * s, 36 * s)
+    .lineWidth(12 * s)
+    .strokeColor('white')
+    .stroke();
+
+  // ── Clasp — white outer circle ────────────────────────────────────────────
+  doc
+    .circle(tx(430), ty(240), 34 * s)
     .fillAndStroke('white', 'white');
 
-  // Clasp circle (inner dot)
+  // ── Clasp — inner dark dot ────────────────────────────────────────────────
   doc
-    .circle(x + 24 * scale, y + 12 * scale, 1 * scale)
+    .circle(tx(430), ty(240), 14 * s)
     .fillAndStroke('#1e3a8a', '#1e3a8a');
+
+  // Thin white ring around inner dot
+  doc
+    .circle(tx(430), ty(240), 14 * s)
+    .lineWidth(2 * s)
+    .strokeColor('white')
+    .stroke();
 }
 
 export async function exportTransactionsToPdf(
@@ -72,8 +103,8 @@ export async function exportTransactionsToPdf(
     doc.on('data', (chunk) => chunks.push(chunk));
 
     // ── Header ──────────────────────────────────────────────────────────────
-    // Wallet icon (drawn at 32px)
-    drawWalletIcon(doc, 40, 36, 32);
+    // Wallet icon (40px render from 512-unit viewBox)
+    drawWalletIcon(doc, 40, 32, 40);
 
     // "Wallet Tally" title next to icon
     doc
