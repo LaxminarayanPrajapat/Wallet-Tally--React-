@@ -14,6 +14,7 @@ function getAdminApp() {
     }
     return admin.initializeApp({
         credential: admin.credential.applicationDefault(),
+        projectId: 'studio-1567093817-a9f72',
     });
 }
 
