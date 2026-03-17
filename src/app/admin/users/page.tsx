@@ -45,7 +45,7 @@ import { useToast } from '@/hooks/use-toast';
 import { countries } from '@/lib/countries';
 import { format } from 'date-fns';
 import { sendUserWarningEmail, sendAccountDeletionEmail } from '@/app/actions/email';
-import { deleteUserCompletely, backfillJoinedAt } from '@/app/actions/admin';
+import { deleteUserCompletely } from '@/app/actions/admin';
 import { cn } from '@/lib/utils';
 
 /**
@@ -86,28 +86,6 @@ export default function AdminUsersPage() {
   // View User Modal State
   const [selectedUserForView, setSelectedUserForView] = useState<any>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-
-  // Backfill state
-  const [isBackfilling, setIsBackfilling] = useState(false);
-
-  const handleBackfillDates = async () => {
-    setIsBackfilling(true);
-    try {
-      const result = await backfillJoinedAt();
-      if (result.success) {
-        toast({
-          title: 'Dates Backfilled',
-          description: `Updated ${result.updated} user record${result.updated !== 1 ? 's' : ''} with their actual registration date.`,
-        });
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Backfill Failed', description: error.message });
-    } finally {
-      setIsBackfilling(false);
-    }
-  };
 
   // Data Fetching
   const usersQuery = useMemoFirebase(() => {
@@ -267,15 +245,6 @@ export default function AdminUsersPage() {
             Registered: {registeredUsers.length} | Showing: {filteredUsers.length}
           </p>
         </div>
-        <Button
-          onClick={handleBackfillDates}
-          disabled={isBackfilling}
-          variant="outline"
-          className="text-xs h-9 border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center gap-2"
-        >
-          {isBackfilling ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
-          {isBackfilling ? 'Fixing Dates...' : 'Fix Registration Dates'}
-        </Button>
       </div>
 
       <div className="flex items-center gap-2 p-3 md:p-4 bg-blue-50 text-blue-700 rounded-xl text-xs md:text-sm font-medium border border-blue-100">
