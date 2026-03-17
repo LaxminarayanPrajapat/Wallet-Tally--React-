@@ -1,11 +1,9 @@
 'use server';
 
 import * as admin from 'firebase-admin';
-import { initializeFirebase } from '@/firebase';
-import { collection, doc, getDocs, writeBatch, updateDoc } from 'firebase/firestore';
 
 /**
- * Initializes Firebase Admin SDK using Application Default Credentials.
+ * Initializes Firebase Admin SDK.
  * Safe to call multiple times - reuses existing app if already initialized.
  */
 function getAdminApp() {
@@ -30,31 +28,27 @@ export async function deleteUserCompletely(
     deleteReason: string
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        const { firestore } = initializeFirebase();
+        const adminApp = getAdminApp();
+        const adminDb = admin.firestore(adminApp);
 
-        // 1. Cascade delete all Firestore data
-        const batch = writeBatch(firestore);
+        // 1. Cascade delete all Firestore subcollections + user doc
+        const batch = adminDb.batch();
         const subcollections = ['transactions', 'categories', 'budgets', 'feedback'];
 
         for (const colName of subcollections) {
-            const colRef = collection(firestore, 'users', userId, colName);
-            const snapshot = await getDocs(colRef);
-            snapshot.forEach((subDoc) => batch.delete(subDoc.ref));
+            const snap = await adminDb.collection('users').doc(userId).collection(colName).get();
+            snap.docs.forEach(d => batch.delete(d.ref));
         }
 
-        batch.delete(doc(firestore, 'users', userId));
+        batch.delete(adminDb.collection('users').doc(userId));
         await batch.commit();
 
-        // 2. Delete from Firebase Auth via Admin SDK
+        // 2. Delete from Firebase Auth
         try {
-            const adminApp = getAdminApp();
             await admin.auth(adminApp).deleteUser(userId);
         } catch (authErr: any) {
-            // If user doesn't exist in Auth, that's fine - Firestore is already cleaned
             if (authErr.code !== 'auth/user-not-found') {
                 console.error('[Admin] Auth deletion failed:', authErr.message);
-                // Don't fail the whole operation - Firestore is clean, Auth will be orphaned
-                // but the email is still freed if we return success after Firestore cleanup
             }
         }
 
@@ -67,43 +61,45 @@ export async function deleteUserCompletely(
 
 /**
  * Backfills joinedAt for ALL users using their actual Firebase Auth creationTime.
- * Overwrites any incorrect joinedAt (e.g. ones set to today's date at OTP verification).
+ * Uses Admin SDK exclusively (no client Firestore SDK) for reliability in server actions.
  */
 export async function backfillJoinedAt(): Promise<{ success: boolean; updated: number; error?: string }> {
     try {
         const adminApp = getAdminApp();
-        const { firestore } = initializeFirebase();
+        const adminAuth = admin.auth(adminApp);
+        const adminDb = admin.firestore(adminApp);
 
-        // List all Auth users (handles pagination)
+        // List all Auth users with pagination
         const allAuthUsers: admin.auth.UserRecord[] = [];
         let pageToken: string | undefined;
         do {
-            const result = await admin.auth(adminApp).listUsers(1000, pageToken);
+            const result = await adminAuth.listUsers(1000, pageToken);
             allAuthUsers.push(...result.users);
             pageToken = result.pageToken;
         } while (pageToken);
 
-        // Build a map of uid → creationTime
+        // Build uid → ISO creationTime map
         const creationMap = new Map<string, string>();
-        for (const authUser of allAuthUsers) {
-            if (authUser.metadata.creationTime) {
-                creationMap.set(authUser.uid, new Date(authUser.metadata.creationTime).toISOString());
+        for (const u of allAuthUsers) {
+            if (u.metadata.creationTime) {
+                creationMap.set(u.uid, new Date(u.metadata.creationTime).toISOString());
             }
         }
 
-        // Update every Firestore user doc with the real creation time
-        const usersSnapshot = await getDocs(collection(firestore, 'users'));
+        // Batch-write joinedAt to every Firestore user doc
+        const usersSnap = await adminDb.collection('users').get();
+        const batch = adminDb.batch();
         let updated = 0;
 
-        for (const userDoc of usersSnapshot.docs) {
+        for (const userDoc of usersSnap.docs) {
             const realDate = creationMap.get(userDoc.id);
             if (realDate) {
-                await updateDoc(doc(firestore, 'users', userDoc.id), {
-                    joinedAt: realDate,
-                });
+                batch.update(userDoc.ref, { joinedAt: realDate });
                 updated++;
             }
         }
+
+        if (updated > 0) await batch.commit();
 
         return { success: true, updated };
     } catch (error: any) {
