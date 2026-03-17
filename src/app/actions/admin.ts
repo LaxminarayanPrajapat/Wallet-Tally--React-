@@ -65,35 +65,42 @@ export async function deleteUserCompletely(
 }
 
 /**
- * Backfills joinedAt for all users who are missing it.
- * Reads creationTime from Firebase Auth and writes it to Firestore.
+ * Backfills joinedAt for ALL users using their actual Firebase Auth creationTime.
+ * Overwrites any incorrect joinedAt (e.g. ones set to today's date at OTP verification).
  */
 export async function backfillJoinedAt(): Promise<{ success: boolean; updated: number; error?: string }> {
     try {
         const adminApp = getAdminApp();
         const { firestore } = initializeFirebase();
 
-        // Get all Firestore users
+        // List all Auth users (handles pagination)
+        const allAuthUsers: admin.auth.UserRecord[] = [];
+        let pageToken: string | undefined;
+        do {
+            const result = await admin.auth(adminApp).listUsers(1000, pageToken);
+            allAuthUsers.push(...result.users);
+            pageToken = result.pageToken;
+        } while (pageToken);
+
+        // Build a map of uid → creationTime
+        const creationMap = new Map<string, string>();
+        for (const authUser of allAuthUsers) {
+            if (authUser.metadata.creationTime) {
+                creationMap.set(authUser.uid, new Date(authUser.metadata.creationTime).toISOString());
+            }
+        }
+
+        // Update every Firestore user doc with the real creation time
         const usersSnapshot = await getDocs(collection(firestore, 'users'));
         let updated = 0;
 
         for (const userDoc of usersSnapshot.docs) {
-            const data = userDoc.data();
-            // Skip users that already have joinedAt
-            if (data.joinedAt) continue;
-
-            try {
-                // Get creation time from Firebase Auth
-                const authUser = await admin.auth(adminApp).getUser(userDoc.id);
-                const creationTime = authUser.metadata.creationTime;
-                if (creationTime) {
-                    await updateDoc(doc(firestore, 'users', userDoc.id), {
-                        joinedAt: new Date(creationTime).toISOString(),
-                    });
-                    updated++;
-                }
-            } catch {
-                // User may not exist in Auth - skip silently
+            const realDate = creationMap.get(userDoc.id);
+            if (realDate) {
+                await updateDoc(doc(firestore, 'users', userDoc.id), {
+                    joinedAt: realDate,
+                });
+                updated++;
             }
         }
 

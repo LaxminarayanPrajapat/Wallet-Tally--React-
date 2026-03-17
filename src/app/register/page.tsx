@@ -192,7 +192,9 @@ export default function RegisterPage() {
           name: values.username,
           photoURL: values.photoURL,
           country: values.country,
-          joinedAt: new Date().toISOString()
+          joinedAt: user.metadata?.creationTime
+            ? new Date(user.metadata.creationTime).toISOString()
+            : new Date().toISOString(),
         });
 
         // Find the selected country to get the currency symbol
