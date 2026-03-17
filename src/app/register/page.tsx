@@ -315,7 +315,7 @@ export default function RegisterPage() {
               name="email"
               render={({ field }) => (
                 <FormItem className="space-y-1.5">
-                  <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Email (Optional)</FormLabel>
+                  <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Email</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
